@@ -1,0 +1,86 @@
+<div id="view-editor"
+     [ngClass]="editorCssType">
+
+  <!-- ============================ -->
+  <!-- ========== Header ========== -->
+  <!-- ============================ -->
+  <div class="view-editor-area"
+       id="view-editor-header-container">
+    <app-view-editor-header (editorEvent)="handleEditorEvent($event)"></app-view-editor-header>
+  </div>
+
+  <!-- ============================= -->
+  <!-- ========== Toolbar ========== -->
+  <!-- ============================= -->
+  <div class="view-editor-area"
+       id="view-editor-toolbar">
+    <div class="form-group">
+      <pfng-toolbar [config]="toolbarConfig"
+                    [actionTemplate]="actionTemplate"
+                    (onViewSelect)="editorConfigChange($event)">
+        <ng-template #actionTemplate>
+          <pfng-action class="toolbar-pf-actions"
+               [config]="getActionConfig(addSourceTemplate,
+                                         addCompositionTemplate,
+                                         undoTemplate,
+                                         redoTemplate,
+                                         saveTemplate,
+                                         deleteTemplate,
+                                         errorsTemplate,
+                                         warningsTemplate,
+                                         infosTemplate)"
+               (onActionSelect)="handleAction($event)">
+            <ng-template #addSourceTemplate let-action="action">
+              <span class="fa fa-database"></span>
+              <span class="fa fa-plus"></span>
+            </ng-template>
+            <ng-template #addCompositionTemplate let-action="action">
+              <span class="fa fa-angle-left"></span>
+              <span class="fa fa-angle-right"></span>
+              <span class="fa fa-plus"></span>
+            </ng-template>
+            <ng-template #undoTemplate let-action="action">
+              <span class="fa fa-rotate-left"></span>
+            </ng-template>
+            <ng-template #redoTemplate let-action="action">
+              <span class="fa fa-rotate-right"></span>
+            </ng-template>
+            <ng-template #saveTemplate let-action="action">
+              <span class="pficon pficon-save"></span>
+            </ng-template>
+            <ng-template #deleteTemplate let-action="action">
+              <span class="pficon pficon-delete"></span>
+            </ng-template>
+            <ng-template #errorsTemplate let-action="action">
+              <span class="pficon pficon-error-circle-o"></span>
+            </ng-template>
+            <ng-template #warningsTemplate let-action="action">
+              <span class="pficon pficon-warning-triangle-o"></span>
+            </ng-template>
+            <ng-template #infosTemplate let-action="action">
+              <span class="pficon pficon-info"></span>
+            </ng-template>
+          </pfng-action>
+        </ng-template>
+      </pfng-toolbar>
+    </div>
+  </div>
+
+  <!-- =========================================== -->
+  <!-- ========== Canvas and Properties ========== -->
+  <!-- =========================================== -->
+  <div id="view-editor-edit-container"
+       *ngIf="isShowingCanvas">
+    <app-view-canvas (editorEvent)="handleEditorEvent($event)"></app-view-canvas>
+  </div>
+
+  <!-- ============================= -->
+  <!-- ========== Results ========== -->
+  <!-- ============================= -->
+  <div class="view-editor-area"
+       id="view-editor-results-container"
+       *ngIf="isShowingResults">
+    <app-view-preview (editorEvent)="handleEditorEvent($event)"></app-view-preview>
+  </div>
+
+</div>

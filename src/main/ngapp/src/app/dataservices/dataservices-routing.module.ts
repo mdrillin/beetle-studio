@@ -22,11 +22,13 @@ import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-datas
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
+import { ViewEditorComponent } from "@dataservices/virtualization/view-editor/view-editor.component";
 
 const dataservicesRoutes: Routes = [
   { path: DataservicesConstants.dataservicesRootRoute, component: DataservicesComponent },
   { path: DataservicesConstants.addDataserviceRoute, component: AddDataserviceComponent },
-  { path: DataservicesConstants.testDataserviceRoute, component: TestDataserviceComponent }
+  // { path: DataservicesConstants.testDataserviceRoute, component: TestDataserviceComponent }
+  { path: DataservicesConstants.testDataserviceRoute, component: ViewEditorComponent }
 ];
 
 @NgModule({

@@ -22,6 +22,7 @@ import { Connection } from "@connections/shared/connection.model";
  */
 export class View {
   private name: string;
+  private description: string;
   private connection: Connection;
   private catalogName: string;
   private schemaName: string;
@@ -29,6 +30,20 @@ export class View {
 
   constructor() {
     // nothing to do
+  }
+
+  /**
+   * @returns {string} the view description
+   */
+  public getDescription(): string {
+    return this.description;
+  }
+
+  /**
+   * @param {string} description the view description
+   */
+  public setDescription( description?: string ): void {
+    this.description = description ? description : null;
   }
 
   /**
