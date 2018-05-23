@@ -202,6 +202,8 @@ export class DataserviceService extends ApiService {
    * @returns {Observable<boolean>}
    */
   public createDataservice(dataservice: NewDataservice): Observable<boolean> {
+    // TODO: Change the service method to return the created dataservice
+    // TODO: Change the service method to create a Service with an auto-generated name, if no name supplied
     return this.http
       .post(environment.komodoWorkspaceUrl + DataservicesConstants.dataservicesRestPath + "/" + dataservice.getId(),
         dataservice, this.getAuthRequestOptions())

@@ -23,6 +23,7 @@ import { RouterModule } from "@angular/router";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
+import { SelectionService } from "@core/selection.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
@@ -54,6 +55,9 @@ import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.co
 import { BsDropdownModule } from 'ngx-bootstrap';
 import { AccordionModule } from 'ngx-bootstrap';
 import { TooltipModule } from 'ngx-bootstrap';
+import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
+import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
+import { VirtualizationComponent } from "./virtualization/virtualization.component";
 
 @NgModule({
   imports: [
@@ -86,7 +90,10 @@ import { TooltipModule } from 'ngx-bootstrap';
     DataserviceCardComponent,
     ConnectionSchemaTreeComponent,
     SelectedNodesListComponent,
-    ConnectionNodeSelectorComponent
+    ConnectionNodeSelectorComponent,
+    VirtualizationComponent,
+    ViewCardsComponent,
+    ViewCardComponent
   ],
   providers: [
     {
@@ -103,6 +110,7 @@ import { TooltipModule } from 'ngx-bootstrap';
     },
     LoggerService,
     NotifierService,
+    SelectionService,
     WizardService
   ],
   exports: [

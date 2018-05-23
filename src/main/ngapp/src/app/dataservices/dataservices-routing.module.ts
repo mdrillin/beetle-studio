@@ -22,10 +22,12 @@ import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-datas
 import { DataservicesComponent } from "@dataservices/dataservices.component";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
+import { VirtualizationComponent } from "@dataservices/virtualization/virtualization.component";
 
 const dataservicesRoutes: Routes = [
   { path: DataservicesConstants.dataservicesRootRoute, component: DataservicesComponent },
   { path: DataservicesConstants.addDataserviceRoute, component: AddDataserviceComponent },
+  { path: DataservicesConstants.virtualizationRoute, component: VirtualizationComponent },
   { path: DataservicesConstants.testDataserviceRoute, component: TestDataserviceComponent }
 ];
 
