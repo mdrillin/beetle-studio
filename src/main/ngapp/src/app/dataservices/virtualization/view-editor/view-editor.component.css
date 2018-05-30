@@ -25,15 +25,23 @@
 }
 
 /*
+ * The editor's breadcrumb bar.
+ */
+#view-editor-breadcrumbs {
+  background-color: white;
+}
+
+/*
  * A view editor showing only header, toolbar, canvas, and properties areas (missing results).
  */
 .view-editor-canvas-only {
   grid-template-areas:
+    "dataservices-breadcrumb-bar"
     "header"
     "toolbar"
     "canvas";
   grid-template-columns: 1fr;
-  grid-template-rows: 10fr 5fr 85fr;
+  grid-template-rows: 5fr 10fr 5fr 80fr;
 }
 
 /*
@@ -48,12 +56,13 @@
  */
 .view-editor-full {
   grid-template-areas:
+    "dataservices-breadcrumb-bar"
     "header"
     "toolbar"
     "canvas"
     "results";
   grid-template-columns: 1fr;
-  grid-template-rows: 10fr 5fr 65fr 20fr;
+  grid-template-rows: 5fr 10fr 5fr 60fr 20fr;
 }
 
 /*
@@ -75,6 +84,7 @@
  */
 #view-editor-results-container {
   grid-area: results;
+  overflow: auto;
 }
 
 /*
@@ -82,11 +92,12 @@
  */
 .view-editor-results-only {
   grid-template-areas:
+    "dataservices-breadcrumb-bar"
     "header"
     "toolbar"
     "results";
   grid-template-columns: 1fr;
-  grid-template-rows: 10fr 5fr 85fr;
+  grid-template-rows: 5fr 10fr 5fr 80fr;
 }
 
 /*

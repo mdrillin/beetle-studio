@@ -32,8 +32,9 @@ export class ViewEditorService {
    *
    * @type {EventEmitter<ViewEditorEvent>}
    */
-  @Output() public editorEvent: EventEmitter< ViewEditorEvent > = new EventEmitter< ViewEditorEvent >();
+  @Output() public editorEvent: EventEmitter< ViewEditorEvent > = new EventEmitter();
 
+  private _editorConfig: string;
   private _editorView: View;
   private _editorVirtualization: Dataservice;
   private _initialDescription: string;
@@ -45,17 +46,18 @@ export class ViewEditorService {
 
   constructor( logger: LoggerService ) {
     this._logger = logger;
-    // TODO remove this when fully implemented
-    this._editorVirtualization = new Dataservice();
-    this._editorVirtualization.setId( "MyAwesomeVirtualization" );
-    this._editorView = new View();
-    this._editorView.setName( "MyUnbelievableView" );
-    this._editorView.setDescription( "This is the description for the view being edited." );
   }
 
   private fire( event: ViewEditorEvent ): void {
-    this._logger.debug( "firing event ${event}" );
+    this._logger.debug( "firing event: " + event );
     this.editorEvent.emit( event );
+  }
+
+  /**
+   * @returns {string} the editor's CSS class
+   */
+  public getEditorConfig(): string {
+    return this._editorConfig;
   }
 
   /**
@@ -106,6 +108,19 @@ export class ViewEditorService {
    */
   public isReadOnly(): boolean {
     return this._readOnly;
+  }
+
+  /**
+   * Sets the view being edited. This is called when the editor is first constructed and can only be called once.
+   * Subsequent calls are ignored.
+   *
+   * @param {string} newCssClass the editor's CSS class
+   */
+  public setEditorConfig( newCssClass: string ): void {
+    if ( this._editorConfig !== newCssClass ) {
+      this._editorConfig = newCssClass;
+      this.fire( ViewEditorEvent.create( ViewEditorEventSource.EDITOR, ViewEditorEventType.EDITOR_CONFIG_CHANGED, [ newCssClass ] ) );
+    }
   }
 
   /**

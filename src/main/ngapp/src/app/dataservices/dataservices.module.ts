@@ -28,6 +28,7 @@ import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-datas
 import { ConnectionNodeSelectorComponent } from "@dataservices/connection-node-selector/connection-node-selector.component";
 import { ConnectionSchemaTreeComponent } from "@dataservices/connection-schema-tree/connection-schema-tree.component";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
+import { SelectionService } from "@core/selection.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
@@ -54,22 +55,13 @@ import { SharedModule } from "@shared/shared.module";
 import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
 import { PatternFlyNgModule } from "patternfly-ng";
-<<<<<<< HEAD
-import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
-import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
-import { ConnectionNodeSelectorComponent } from "./connection-node-selector/connection-node-selector.component";
-import { ConnectionSchemaTreeComponent } from "./connection-schema-tree/connection-schema-tree.component";
-import { DataserviceCardComponent } from "./dataservices-cards/dataservice-card/dataservice-card.component";
-import { SelectedNodeComponent } from "./selected-node/selected-node.component";
-import { SelectedNodesListComponent } from "./selected-nodes-list/selected-nodes-list.component";
-import { SqlControlComponent } from "./sql-control/sql-control.component";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
-import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
 import { BsDropdownModule } from 'ngx-bootstrap';
 import { AccordionModule } from 'ngx-bootstrap';
 import { TooltipModule } from 'ngx-bootstrap';
-=======
->>>>>>> Initial implementation of the view editor page layout
+import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
+import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
+import { VirtualizationComponent } from "./virtualization/virtualization.component";
 
 @NgModule({
   imports: [
@@ -106,7 +98,10 @@ import { TooltipModule } from 'ngx-bootstrap';
     ViewEditorComponent,
     ViewPreviewComponent,
     ViewEditorHeaderComponent,
-    ViewCanvasComponent
+    ViewCanvasComponent,
+    VirtualizationComponent,
+    ViewCardsComponent,
+    ViewCardComponent
   ],
   providers: [
     {
@@ -123,6 +118,7 @@ import { TooltipModule } from 'ngx-bootstrap';
     },
     LoggerService,
     NotifierService,
+    SelectionService,
     WizardService
   ],
   exports: [

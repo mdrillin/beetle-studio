@@ -38,13 +38,6 @@ export class ViewEditorEvent {
     return new ViewEditorEvent( source, type, args );
   }
 
-  /**
-   * @returns {string} a string representation of the event
-   */
-  public toString = (): string => {
-    return "type: ${this.type}, source: ${this.source}, arg count: ${this.args.length}";
-  }
-
   private constructor( source: ViewEditorEventSource,
                        type: ViewEditorEventType,
                        args?: any[] ) {
@@ -68,6 +61,13 @@ export class ViewEditorEvent {
    */
   public get source(): ViewEditorEventSource {
     return this._source;
+  }
+
+  /**
+   * @returns {string} a string representation of the event
+   */
+  public toString(): string {
+    return `type: ${this.type}, source: ${this.source}, arg count: ${this.args.length}`;
   }
 
   /**

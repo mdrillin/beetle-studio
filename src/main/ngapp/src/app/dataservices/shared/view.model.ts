@@ -27,23 +27,10 @@ export class View {
   private catalogName: string;
   private schemaName: string;
   private isSelected = false;
+  private isValid = false;
 
   constructor() {
     // nothing to do
-  }
-
-  /**
-   * @returns {string} the view description
-   */
-  public getDescription(): string {
-    return this.description;
-  }
-
-  /**
-   * @param {string} description the view description
-   */
-  public setDescription( description?: string ): void {
-    this.description = description ? description : null;
   }
 
   /**
@@ -58,6 +45,20 @@ export class View {
    */
   public setName( name?: string ): void {
     this.name = name ? name : null;
+  }
+
+  /**
+   * @returns {string} the view description
+   */
+  public getDescription(): string {
+    return this.description;
+  }
+
+  /**
+   * @param {string} name the view description
+   */
+  public setDescription( description?: string ): void {
+    this.description = description ? description : null;
   }
 
   /**
@@ -100,6 +101,14 @@ export class View {
    */
   public setSchemaName( schemaName?: string ): void {
     this.schemaName = schemaName ? schemaName : null;
+  }
+
+  /**
+   * Determine whether the view is in a valid state
+   * @returns {boolean} true if valid
+   */
+  public get valid(): boolean {
+    return this.isValid;
   }
 
   /**

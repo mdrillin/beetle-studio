@@ -1,6 +1,18 @@
 <div id="view-editor"
      [ngClass]="editorCssType">
 
+  <!-- ================================= -->
+  <!-- ========== Breadcrumbs ========== -->
+  <!-- ================================= -->
+  <div class="view-editor-area"
+       id="view-editor-breadcrumbs">
+    <app-breadcrumbs>
+      <li app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ virtualizationsLink ]"></li>
+      <li app-breadcrumb label="Virtualization" icon="sitemap" [route]="[ virtualizationLink ]"></li>
+      <li app-breadcrumb label="View" icon="bitbucket" class="active"></li>
+    </app-breadcrumbs>
+  </div>
+
   <!-- ============================ -->
   <!-- ========== Header ========== -->
   <!-- ============================ -->
@@ -80,7 +92,7 @@
   <div class="view-editor-area"
        id="view-editor-results-container"
        *ngIf="isShowingResults">
-    <app-view-preview (editorEvent)="handleEditorEvent($event)"></app-view-preview>
+    <app-view-preview></app-view-preview>
   </div>
 
 </div>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
@@ -24,6 +24,7 @@ import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { ColumnData } from "@dataservices/shared/column-data.model";
 import { RowData } from "@dataservices/shared/row-data.model";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -31,7 +32,7 @@ import { RowData } from "@dataservices/shared/row-data.model";
   templateUrl: "./view-preview.component.html",
   styleUrls: ["./view-preview.component.css"]
 })
-export class ViewPreviewComponent implements OnInit {
+export class ViewPreviewComponent implements OnInit, OnDestroy {
 
   public columns: any[] = [];
   public ngxConfig: NgxDataTableConfig;
@@ -41,6 +42,7 @@ export class ViewPreviewComponent implements OnInit {
   private emptyStateConfig: EmptyStateConfig;
   private logger: LoggerService;
   private editorService: ViewEditorService;
+  private subscription: Subscription;
 
   /**
    * @param {ViewEditorService} editorService the editor service
@@ -48,8 +50,9 @@ export class ViewPreviewComponent implements OnInit {
    */
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
-    this.editorService = editorService;
     this.logger = logger;
+    this.editorService = editorService;
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   private clearResults(): void {
@@ -65,6 +68,8 @@ export class ViewPreviewComponent implements OnInit {
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
+    this.logger.debug( "ViewPreviewComponent received event: " + event.toString() );
+
     if ( event.type === ViewEditorEventType.PREVIEW_RESULTS_CHANGED ) {
       const results = this.editorService.getPreviewResults();
 
@@ -73,18 +78,27 @@ export class ViewPreviewComponent implements OnInit {
       } else {
         this.clearResults();
       }
-    } else if ( event.type === ViewEditorEventType.VIEW_VALID_CHANGED ) {
-      if ( !this.editorService.viewIsValid() ) {
-        this.clearResults();
-      }
+    } else if ( event.type === ViewEditorEventType.VIEW_VALID_CHANGED && !this.editorService.viewIsValid() ) {
+      this.clearResults();
     }
   }
 
+  /**
+   * Cleanup code when destroying the preview part.
+   */
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * Initialization code run after construction.
+   */
   public ngOnInit(): void {
     this.ngxConfig = {
-      headerHeight: 100,
+      headerHeight: 40,
+      rowHeight: 20,
       scrollbarH: true,
-      scrollbarV: true,
+      scrollbarV: true
     } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
@@ -94,6 +108,9 @@ export class ViewPreviewComponent implements OnInit {
     this.tableConfig = {
       emptyStateConfig: this.emptyStateConfig
     } as TableConfig;
+
+    const results = this.editorService.getPreviewResults();
+    this.reload( results );
   }
 
   private reload( results: QueryResults ): void {
@@ -108,7 +125,7 @@ export class ViewPreviewComponent implements OnInit {
 
     const columnData: ColumnData[] = results.getColumns();
     const rowData: RowData[] = results.getRows();
-    this.logger.debug( "ViewPreviewComponent.reload called with ${rowData.length} result rows" );
+    this.logger.debug( "ViewPreviewComponent.reload called with " + rowData.length + " result rows" );
 
     // Define the row data
     let firstTime = true;

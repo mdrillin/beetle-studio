@@ -23,6 +23,11 @@ export enum ViewEditorEventType {
   CANVAS_SELECTION_CHANGED = "CANVAS_SELECTION_CHANGED",
 
   /**
+   * An event indicating the editor configuration has changed.
+   */
+  EDITOR_CONFIG_CHANGED = "EDITOR_CONFIG_CHANGED",
+
+  /**
    * An event indicating the preview results have changed.
    */
   PREVIEW_RESULTS_CHANGED = "PREVIEW_RESULTS_CHANGED",
@@ -46,6 +51,6 @@ export enum ViewEditorEventType {
    * An event indication the view validation status has changed.
    * @type {string}
    */
-  VIEW_VALID_CHANGED = "VIEW_VALIDATION"
+  VIEW_VALID_CHANGED = "VIEW_VALID_CHANGED"
 
 }
