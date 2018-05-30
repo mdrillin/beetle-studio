@@ -175,19 +175,19 @@ export class VirtualizationComponent implements OnInit {
    * @param {string} viewName
    */
   public onEdit(viewName: string): void {
+    // Sets the selected view in the service
     const selectedView =  this.views.find((x) => x.getName() === viewName);
+    this.selectionService.setSelectedView( this.currentVirtualization, selectedView );
 
-    alert("Go to View Editor - Edit View " + selectedView.getName());
+    const link: string[] = [ DataservicesConstants.viewPath ];
+    this.logger.log("[VirtualizationComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
+  }
 
-    // Sets the selected view and edit mode before transferring
-    // this.wizardService.setSelectedDataservice(selectedService);
-    // this.wizardService.setEdit(true);
-    //
-    // const link: string[] = [ DataservicesConstants.virtualizationPath ];
-    // this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
-    // this.router.navigate(link).then(() => {
-    //   // nothing to do
-    // });
+  public onSelected( view: View ): void {
+    this.selectionService.setSelectedView( this.currentVirtualization, view );
   }
 
   // ----------------
