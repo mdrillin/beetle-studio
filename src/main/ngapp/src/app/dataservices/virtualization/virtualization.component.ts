@@ -56,10 +56,16 @@ export class VirtualizationComponent implements OnInit {
     if (this.selectionService.hasSelectedVirtualization) {
       this.currentVirtualization = this.selectionService.getSelectedVirtualization();
       this.originalName = this.currentVirtualization.getId();
-      this.initFormAndViews(this.currentVirtualization);
+      this.initForm(this.currentVirtualization.getId(), this.currentVirtualization.getDescription(), false);
+      // Init views
+      this.views = this.currentVirtualization.getViews();
+      this.setViewsEditableState(true);
     } else {
       this.originalName = "";
       this.newVirtualization = this.dataserviceService.newDataserviceInstance(this.originalName, "");
+      this.initForm(this.newVirtualization.getId(), this.newVirtualization.getDescription(), true);
+      // Init Views
+      this.views = [];
     }
   }
 
@@ -306,19 +312,17 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /*
-   * Init the form values and get the virtualization views
-   * @param {Dataservice} virtualization the dataservice
+   * Init the form values
+   * @param {string} name the dataservice name
+   * @param {string} description the dataservice description
+   * @param {boolean} nameEditable 'true' if can edit the name
    */
-  private initFormAndViews(virtualization: Dataservice): void {
-    // Set the initial form values
-    const dsName = virtualization.getId();
-    const dsDescr = virtualization.getDescription();
-    this.viewPropertyForm.controls["name"].setValue(dsName);
-    this.viewPropertyForm.controls["description"].setValue(dsDescr);
-
-    // Get views and set editable
-    this.views = virtualization.getViews();
-    this.setViewsEditableState(true);
+  private initForm(name: string, descr: string, nameEditable: boolean): void {
+    if (!nameEditable) {
+      this.viewPropertyForm.get("name").disable();
+    }
+    this.viewPropertyForm.controls["name"].setValue(name);
+    this.viewPropertyForm.controls["description"].setValue(descr);
   }
 
   /*
@@ -335,7 +339,7 @@ export class VirtualizationComponent implements OnInit {
             if (ds.getId() === dsName) {
               self.currentVirtualization = ds;
               self.originalName = this.currentVirtualization.getId();
-              self.initFormAndViews(this.currentVirtualization);
+              self.initForm(this.currentVirtualization.getId(), this.currentVirtualization.getDescription(), false);
             }
           }
           self.createInProgress = false;
