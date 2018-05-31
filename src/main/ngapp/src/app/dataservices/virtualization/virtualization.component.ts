@@ -318,11 +318,11 @@ export class VirtualizationComponent implements OnInit {
    * @param {boolean} nameEditable 'true' if can edit the name
    */
   private initForm(name: string, descr: string, nameEditable: boolean): void {
-    this.viewPropertyForm.controls["name"].setValue(name);
-    this.viewPropertyForm.controls["description"].setValue(name);
     if (!nameEditable) {
       this.viewPropertyForm.get("name").disable();
     }
+    this.viewPropertyForm.controls["name"].setValue(name);
+    this.viewPropertyForm.controls["description"].setValue(name);
   }
 
   /*
