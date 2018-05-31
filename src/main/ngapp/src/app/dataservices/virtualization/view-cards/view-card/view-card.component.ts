@@ -90,6 +90,7 @@ export class ViewCardComponent implements DoCheck, OnInit {
       moreActions: [
         {
           id: this.deleteActionId,
+          disabled: !this.view.editable,
           title: "Delete",
           tooltip: "Delete"
         }

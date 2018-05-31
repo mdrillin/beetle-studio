@@ -32,6 +32,8 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
+import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
+import { environment } from "@environments/environment";
 
 @Injectable()
 export class MockVdbService extends VdbService {
@@ -153,6 +155,10 @@ export class MockVdbService extends VdbService {
 
   public getVirtualizations(): Observable< Virtualization[] > {
     return Observable.of( this.virtualizations );
+  }
+
+  public deleteView(vdbName: string, modelName: string, viewName: string): Observable<boolean> {
+    return Observable.of(true);
   }
 
 }

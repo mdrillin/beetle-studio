@@ -10,6 +10,8 @@ import { View } from "@dataservices/shared/view.model";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { BsModalService } from "ngx-bootstrap";
 import { ActionConfig, EmptyStateConfig } from "patternfly-ng";
+import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
+import { VdbService } from "@dataservices/shared/vdb.service";
 
 @Component({
   selector: "app-virtualization",
@@ -24,19 +26,25 @@ export class VirtualizationComponent implements OnInit {
   public nameValidationError = "";
   public views: View[] = [];
   public selectedViews: View[] = [];
+  private createInProgress = false;
 
   private selectionService: SelectionService;
   private dataserviceService: DataserviceService;
   private modalService: BsModalService;
+  private vdbService: VdbService;
   private router: Router;
   private logger: LoggerService;
   private noViewsConfig: EmptyStateConfig;
+  private nameVirtualizationConfig: EmptyStateConfig;
   private currentVirtualization: Dataservice = null;
+  private originalName: string;
+  private newVirtualization: NewDataservice = null;
 
   constructor( selectionService: SelectionService, dataserviceService: DataserviceService,
-               modalService: BsModalService, router: Router, logger: LoggerService ) {
+               vdbService: VdbService, modalService: BsModalService, router: Router, logger: LoggerService ) {
     this.selectionService = selectionService;
     this.dataserviceService = dataserviceService;
+    this.vdbService = vdbService;
     this.modalService = modalService;
     this.router = router;
     this.logger = logger;
@@ -47,25 +55,20 @@ export class VirtualizationComponent implements OnInit {
     // If there is a virtualization selection, edit it.  Otherwise create a new virtualization
     if (this.selectionService.hasSelectedVirtualization) {
       this.currentVirtualization = this.selectionService.getSelectedVirtualization();
+      this.originalName = this.currentVirtualization.getId();
+      this.initFormAndViews(this.currentVirtualization);
     } else {
-      this.currentVirtualization = new Dataservice();
-      this.currentVirtualization.setId("newVirtualization");
-      this.currentVirtualization.setDescription(null);
+      this.originalName = "";
+      this.newVirtualization = this.dataserviceService.newDataserviceInstance(this.originalName, "");
     }
+  }
 
-    // Set the initial form values
-    const dsName = this.currentVirtualization.getId();
-    const dsDescr = this.currentVirtualization.getDescription();
-    this.viewPropertyForm.controls["name"].setValue(dsName);
-    this.viewPropertyForm.controls["description"].setValue(dsDescr);
-
-    // Disable name changes on edit
-    if (this.selectionService.hasSelectedVirtualization) {
-      this.viewPropertyForm.get("name").disable();
-    }
-
-    // Get views
-    this.views = this.currentVirtualization.getViews();
+  /**
+   * Get new virtualization status
+   * @returns {boolean} true if the virtualization has not yet been named
+   */
+  public get isNew( ): boolean {
+    return this.newVirtualization && this.newVirtualization !== null;
   }
 
   /**
@@ -77,27 +80,74 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /**
+   * Determine if the virtualization has a pending name change
+   * @returns {boolean} 'true' if pending name change
+   */
+  public get hasPendingNameChange( ): boolean {
+    return this.originalName !== this.viewPropertyForm.controls["name"].value.toString();
+  }
+
+  /**
+   * Save the dataservice using the current name value.  This cannot be invoked unless there are pending changes,
+   * and the name is valid.
+   */
+  public onSaveName( ): void {
+    const theName = this.viewPropertyForm.controls["name"].value.toString();
+    const theDescription = this.viewPropertyForm.controls["description"].value.toString();
+
+    // If this is a brand new dataservice, create it
+    if (this.isNew) {
+      const self = this;
+      this.createInProgress = true;
+      this.newVirtualization.setId(theName);
+      this.newVirtualization.setDescription(theDescription);
+      this.dataserviceService
+        .createDataservice(this.newVirtualization)
+        .subscribe(
+          (wasSuccess) => {
+            // After create of dataservice, remove 'newVirtualization'
+            self.newVirtualization = null;
+            // Set the current virtualization to the newly created virtualization
+            self.selectDataservice(theName);
+          },
+          (error) => {
+            self.logger.error("[VirtualizationComponent] Error creating virtualization: %o", error);
+            self.createInProgress = false;
+          }
+        );
+      // Existing dataservice - update it
+    } else {
+      // TODO: Determine action for rename of existing
+    }
+  }
+
+  /**
    * Handler for dataservice name changes.
    * @param {AbstractControl} input
    */
   public handleNameChanged( input: AbstractControl ): void {
     const self = this;
 
-    // this.dataserviceService.isValidName( input.value ).subscribe(
-    //   ( errorMsg ) => {
-    //     if ( errorMsg ) {
-    //       // only update if error has changed
-    //       if ( errorMsg !== self.nameValidationError ) {
-    //         self.nameValidationError = errorMsg;
-    //       }
-    //     } else { // name is valid
-    //       self.nameValidationError = "";
-    //     }
-    //     self.updatePage2aValidStatus();
-    //   },
-    //   ( error ) => {
-    //     self.logger.error( "[handleNameChanged] Error: %o", error );
-    //   } );
+    this.dataserviceService.isValidName( input.value ).subscribe(
+      ( errorMsg ) => {
+        if ( errorMsg ) {
+          // only update if error has changed
+          if ( errorMsg !== self.nameValidationError ) {
+            self.nameValidationError = errorMsg;
+          }
+          self.setViewsEditableState(false);
+        } else { // name is valid
+          self.nameValidationError = "";
+          if (self.hasPendingNameChange) {
+            self.setViewsEditableState(false);
+          } else {
+            self.setViewsEditableState(true);
+          }
+        }
+      },
+      ( error ) => {
+        self.logger.error( "[handleNameChanged] Error: %o", error );
+      } );
   }
 
   /*
@@ -135,6 +185,22 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /**
+   * The configuration for empty state with brand new virtualization.  (Prompts user to name the virtualization)
+   * @returns {EmptyStateConfig} the empty state config
+   */
+  public get newVirtualizationConfig(): EmptyStateConfig {
+    if ( !this.nameVirtualizationConfig ) {
+      this.nameVirtualizationConfig = {
+        iconStyleClass: "pficon-warning-triangle-o",
+        info: "Please enter a name for the virtualization and save it",
+        title: "Enter VirtualizationName"
+      } as EmptyStateConfig;
+    }
+
+    return this.nameVirtualizationConfig;
+  }
+
+  /**
    * Handle Delete of the specified View
    * @param {string} viewName
    */
@@ -159,15 +225,14 @@ export class VirtualizationComponent implements OnInit {
    * Handle request for new View
    */
   public onNew(): void {
-    this.selectionService.setSelectedView(this.currentVirtualization, null);
+    // Setting the selected view null indicates new view
+    this.selectionService.setSelectedView( this.currentVirtualization, null );
 
-    alert("Go to View Editor - for New View ");
-
-    // const link: string[] = [ DataservicesConstants.virtualizationPath ];
-    // this.logger.log("[DataservicesPageComponent] Navigating to: %o", link);
-    // this.router.navigate(link).then(() => {
-    //   // nothing to do
-    // });
+    const link: string[] = [ DataservicesConstants.viewPath ];
+    this.logger.log("[VirtualizationComponent] Navigating to: %o", link);
+    this.router.navigate(link).then(() => {
+      // nothing to do
+    });
   }
 
   /**
@@ -199,22 +264,22 @@ export class VirtualizationComponent implements OnInit {
    * @param {string} viewName the name of the view
    */
   private onDeleteView(viewName: string): void {
-    const selectedService =  this.views.find((x) => x.getName() === viewName);
-
+    const selectedView =  this.views.find((x) => x.getName() === viewName);
+    const vdbName = this.currentVirtualization.getServiceVdbName();
+    const modelName = this.currentVirtualization.getServiceViewModel();
     // Note: we can only doDelete selected items that we can see in the UI.
-    this.logger.log("[VirtualizationComponent] Deleting selected Virtualization Vies.");
+    this.logger.log("[VirtualizationComponent] Deleting selected Virtualization View.");
     const self = this;
-    // this.dataserviceService
-    //   .deleteDataservice(selectedService.getId())
-    //   .subscribe(
-    //     (wasSuccess) => {
-    //       self.undeployVdb(selectedService.getServiceVdbName());
-    //       self.removeDataserviceFromList(selectedService);
-    //     },
-    //     (error) => {
-    //       self.error(error, "Error deleting the dataservice");
-    //     }
-    //   );
+    this.vdbService
+      .deleteView(vdbName, modelName, selectedView.getName())
+      .subscribe(
+        (wasSuccess) => {
+          self.removeViewFromList(selectedView);
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error deleting the view: %o", error);
+        }
+      );
   }
 
   /*
@@ -238,6 +303,66 @@ export class VirtualizationComponent implements OnInit {
         description: new FormControl("")
       });
     }
+  }
+
+  /*
+   * Init the form values and get the virtualization views
+   * @param {Dataservice} virtualization the dataservice
+   */
+  private initFormAndViews(virtualization: Dataservice): void {
+    // Set the initial form values
+    const dsName = virtualization.getId();
+    const dsDescr = virtualization.getDescription();
+    this.viewPropertyForm.controls["name"].setValue(dsName);
+    this.viewPropertyForm.controls["description"].setValue(dsDescr);
+
+    // Get views and set editable
+    this.views = virtualization.getViews();
+    this.setViewsEditableState(true);
+  }
+
+  /*
+   * Select the specified Dataservice.
+   * @param {string} dsName the name of the dataservice
+   */
+  private selectDataservice(dsName: string): void {
+    const self = this;
+    this.dataserviceService
+      .getAllDataservices()
+      .subscribe(
+        (dataservices) => {
+          for (const ds of dataservices) {
+            if (ds.getId() === dsName) {
+              self.currentVirtualization = ds;
+              self.originalName = this.currentVirtualization.getId();
+              self.initFormAndViews(this.currentVirtualization);
+            }
+          }
+          self.createInProgress = false;
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error selecting the virtualization: %o", error);
+          self.createInProgress = false;
+        }
+      );
+  }
+
+  /*
+   * Set the editable state of all views.
+   * @param {boolean} isEditable the editable state
+   */
+  private setViewsEditableState(isEditable: boolean): void {
+    for (const view of this.views) {
+      view.editable = isEditable;
+    }
+  }
+
+  /*
+   * Remove the specified View from the list of views
+   * @param {View} view the view to remove
+   */
+  private removeViewFromList(view: View): void {
+    this.views.splice(this.views.indexOf(view), 1);
   }
 
 }
