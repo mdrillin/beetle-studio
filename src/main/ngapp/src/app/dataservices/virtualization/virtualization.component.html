@@ -63,12 +63,23 @@
         <div class="spinner spinner-lg blank-slate-pf-icon"></div>
       </div>
 
-      <!-- Blank State for new virtualization -->
-      <div class="row" *ngIf="!createInProgress && isNew" >
+      <!-- Blank State prompts for name entry -->
+      <div class="row" *ngIf="!createInProgress && isNew && !hasPendingNameChange" >
         <div class="col-sm-12">
           <div class="form-group">
             <pfng-empty-state
-              [config]="newVirtualizationConfig">
+              [config]="enterVirtualizationNameConfig">
+            </pfng-empty-state>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blank State prompts for name save -->
+      <div class="row" *ngIf="!createInProgress && isNew && hasPendingNameChange" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="saveVirtualizationNameConfig">
             </pfng-empty-state>
           </div>
         </div>
