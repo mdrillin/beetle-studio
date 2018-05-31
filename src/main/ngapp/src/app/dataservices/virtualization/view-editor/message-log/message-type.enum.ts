@@ -15,36 +15,21 @@
  * limitations under the License.
  */
 
-export enum ViewEditorEventSource {
+export enum MessageType {
 
   /**
-   * The source of the event is the canvas part.
+   * Indicates the message is an error message.
    */
-  CANVAS = "CANVAS",
+  ERROR = "ERROR",
 
   /**
-   * The source of the event is the editor.
+   * Indicates the message is an informational message.
    */
-  EDITOR = "EDITOR",
+  INFO = "INFO",
 
   /**
-   * The source of the event is the header part.
+   * Indicates the message is a warning message.
    */
-  HEADER = "HEADER",
-
-  /**
-   * The source of the event is the message log part.
-   */
-  MESSAGE_LOG = "MESSAGE_LOG",
-
-  /**
-   * The source of the event is the preview part.
-   */
-  PREVIEW = "PREVIEW",
-
-  /**
-   * The source of the event is the properties part.
-   */
-  PROPERTIES = "PROPERTIES"
+  WARNING = "WARNING",
 
 }

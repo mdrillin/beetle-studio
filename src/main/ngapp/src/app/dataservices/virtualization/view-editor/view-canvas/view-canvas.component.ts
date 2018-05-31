@@ -15,31 +15,48 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   selector: "app-view-canvas",
   templateUrl: "./view-canvas.component.html",
   styleUrls: ["./view-canvas.component.css"]
 })
-export class ViewCanvasComponent implements OnInit {
+export class ViewCanvasComponent implements OnInit, OnDestroy {
 
   private logger: LoggerService;
   private editorService: ViewEditorService;
+  private subscription: Subscription;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
     this.editorService = editorService;
     this.logger = logger;
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
+  /**
+   * @param {ViewEditorEvent} event the event being processed
+   */
   public handleEditorEvent( event: ViewEditorEvent ): void {
     // TODO implement
+    this.logger.debug( "ViewCanvasComponent received event: " + event.toString() );
   }
 
+  /**
+   * Cleanup code when destroying the canvas and properties parts.
+   */
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * Initialization code run after construction.
+   */
   public ngOnInit(): void {
     // nothing to do
   }

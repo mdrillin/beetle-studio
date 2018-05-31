@@ -18,7 +18,7 @@
   <!-- ============================ -->
   <div class="view-editor-area"
        id="view-editor-header-container">
-    <app-view-editor-header (editorEvent)="handleEditorEvent($event)"></app-view-editor-header>
+    <app-view-editor-header></app-view-editor-header>
   </div>
 
   <!-- ============================= -->
@@ -64,13 +64,13 @@
               <span class="pficon pficon-delete"></span>
             </ng-template>
             <ng-template #errorsTemplate let-action="action">
-              <span class="pficon pficon-error-circle-o"></span>
+              <span class="pficon pficon-error-circle-o badge-pf-bordered">{{errorMsgCount}}</span>
             </ng-template>
             <ng-template #warningsTemplate let-action="action">
-              <span class="pficon pficon-warning-triangle-o"></span>
+              <span class="pficon pficon-warning-triangle-o badge-pf-bordered">{{warningMsgCount}}</span>
             </ng-template>
             <ng-template #infosTemplate let-action="action">
-              <span class="pficon pficon-info"></span>
+              <span class="pficon pficon-info badge-pf-bordered">{{infoMsgCount}}</span>
             </ng-template>
           </pfng-action>
         </ng-template>
@@ -83,7 +83,7 @@
   <!-- =========================================== -->
   <div id="view-editor-edit-container"
        *ngIf="isShowingCanvas">
-    <app-view-canvas (editorEvent)="handleEditorEvent($event)"></app-view-canvas>
+    <app-view-canvas></app-view-canvas>
   </div>
 
   <!-- ============================= -->

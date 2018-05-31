@@ -62,6 +62,7 @@ import { TooltipModule } from 'ngx-bootstrap';
 import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
 import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
 import { VirtualizationComponent } from "./virtualization/virtualization.component";
+import { MessageLogComponent } from './virtualization/view-editor/message-log/message-log.component';
 
 @NgModule({
   imports: [
@@ -101,7 +102,8 @@ import { VirtualizationComponent } from "./virtualization/virtualization.compone
     ViewCanvasComponent,
     VirtualizationComponent,
     ViewCardsComponent,
-    ViewCardComponent
+    ViewCardComponent,
+    MessageLogComponent
   ],
   providers: [
     {

@@ -23,6 +23,8 @@ import { View } from "@dataservices/shared/view.model";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
+import { Message } from "@dataservices/virtualization/view-editor/message-log/message";
+import { Problem } from "@dataservices/virtualization/view-editor/message-log/problem";
 
 @Injectable()
 export class ViewEditorService {
@@ -40,12 +42,49 @@ export class ViewEditorService {
   private _initialDescription: string;
   private _initialName: string;
   private _logger: LoggerService;
+  private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
   private _viewIsValid = false;
+  private _viewNameIsEmpty = false;
 
   constructor( logger: LoggerService ) {
     this._logger = logger;
+  }
+
+  /**
+   * @param {Message} msg the message being added
+   * @param {ViewEditorEventSource} source the source that is adding the message
+   */
+  public addMessage( msg: Message,
+                     source: ViewEditorEventSource ): void {
+    this._messages.push( msg );
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_ADDED, [ msg ] ) );
+  }
+
+  /**
+   * Clears all log messages.
+   *
+   * @param {ViewEditorEventSource} source the source that is deleting the message
+   */
+  public clearMessages( source: ViewEditorEventSource ): void {
+    this._messages.length = 0;
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED ) );
+  }
+
+  /**
+   * @param {string} msgId the ID of the message being deleted
+   * @param {ViewEditorEventSource} source the source that is deleting the message
+   */
+  public deleteMessage( msgId: string,
+                        source: ViewEditorEventSource ): void {
+    const index = this._messages.findIndex( ( msg ) => msg.id === msgId );
+
+    if ( index !== -1 ) {
+      const msg = this._messages[ index ];
+      this._messages.splice( index, 1 );
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_DELETED, [ msg ] ) );
+    }
   }
 
   private fire( event: ViewEditorEvent ): void {
@@ -75,6 +114,41 @@ export class ViewEditorService {
   }
 
   /**
+   * @returns {number} the number of error messages
+   */
+  public getErrorMessageCount(): number {
+    return this.getErrorMessages().length;
+  }
+
+  /**
+   * @returns {Message[]} the error messages
+   */
+  public getErrorMessages(): Message[] {
+    return this._messages.filter( ( msg ) => msg.isError() );
+  }
+
+  /**
+   * @returns {number} the number of informational messages
+   */
+  public getInfoMessageCount(): number {
+    return this.getInfoMessages().length;
+  }
+
+  /**
+   * @returns {Message[]} the informational messages
+   */
+  public getInfoMessages(): Message[] {
+    return this._messages.filter( ( msg ) => msg.isInfo() );
+  }
+
+  /**
+   * @returns {Message[]} the log messages (error, warning, and info)
+   */
+  public getMessages(): Message[] {
+    return this._messages;
+  }
+
+  /**
    * @returns {QueryResults} the preview results or `null` if not set
    */
   public getPreviewResults(): QueryResults {
@@ -82,25 +156,47 @@ export class ViewEditorService {
   }
 
   /**
-   * @returns {string} the view description or `null` if view has not been set
+   * @returns {string} the view description (never `null` but can be empty)
    */
   public getViewDescription(): string {
-    if ( this._editorView ) {
+    if ( this._editorView && this._editorView.getDescription() ) {
       return this._editorView.getDescription();
     }
 
-    return null;
+    return "";
   }
 
   /**
-   * @returns {string} the view name or `null` if view has not been set
+   * @returns {string} the view name (never `null` but can be empty)
    */
   public getViewName(): string {
     if ( this._editorView ) {
       return this._editorView.getName();
     }
 
-    return null;
+    return "";
+  }
+
+  /**
+   * @returns {number} the number of warning messages
+   */
+  public getWarningMessageCount(): number {
+    return this.getWarningMessages().length;
+  }
+
+  /**
+   * @returns {Message[]} the warning messages
+   */
+  public getWarningMessages(): Message[] {
+    return this._messages.filter( ( msg ) => msg.isWarning() );
+  }
+
+  /**
+   * @returns {boolean} `true` if the editor has unsaved changes
+   */
+  public hasChanges(): boolean {
+    // TODO this is not working since save button does not enable after making changes
+    return this._initialName !== this.getViewName() || this._initialDescription !== this.getViewDescription();
   }
 
   /**
@@ -124,16 +220,20 @@ export class ViewEditorService {
   }
 
   /**
-   * Sets the view being edited. This is called when the editor is first constructed and can only be called once.
-   * Subsequent calls are ignored.
+   * Sets the view being edited. This should only be called once. Subsequent calls are ignored. Fires a
+   * `ViewEditorEventType.VIEW_CHANGED` event having the view as an argument.
    *
    * @param {View} view the view being edited
+   * @param {ViewEditorEventSource} source the source making the update
    */
-  public setEditorView( view: View ): void {
+  public setEditorView( view: View,
+                        source: ViewEditorEventSource ): void {
     if ( !this._editorView ) {
       this._editorView = view;
       this._initialDescription = this._editorView.getDescription();
       this._initialName = this._editorView.getName();
+      this._viewNameIsEmpty = this._initialName ? this._initialName.length === 0 : true;
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_CHANGED, [ this._editorView ] ) );
     } else {
       this._logger.debug( "setEditorView called more than once" );
     }
@@ -219,6 +319,18 @@ export class ViewEditorService {
   public setViewName( newName: string,
                       source: ViewEditorEventSource ): void {
     this._editorView.setName( newName );
+
+    const oldIsEmpty = this._viewNameIsEmpty;
+    this._viewNameIsEmpty = newName ? newName.length === 0 : true;
+
+    if ( oldIsEmpty !== this._viewNameIsEmpty ) {
+      if ( oldIsEmpty ) {
+        this.deleteMessage( Problem.ERR0110.id, source );
+      } else {
+        this.addMessage( Message.create( Problem.ERR0110 ), source );
+      }
+    }
+
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_NAME_CHANGED, [ newName ] ) );
   }
 
