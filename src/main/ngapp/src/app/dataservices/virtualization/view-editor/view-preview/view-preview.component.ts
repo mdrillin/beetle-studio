@@ -70,7 +70,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
   public handleEditorEvent( event: ViewEditorEvent ): void {
     this.logger.debug( "ViewPreviewComponent received event: " + event.toString() );
 
-    if ( event.type === ViewEditorEventType.PREVIEW_RESULTS_CHANGED ) {
+    if ( event.typeIsPreviewResultsChanged() ) {
       const results = this.editorService.getPreviewResults();
 
       if ( results ) {
@@ -78,7 +78,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
       } else {
         this.clearResults();
       }
-    } else if ( event.type === ViewEditorEventType.VIEW_VALID_CHANGED && !this.editorService.viewIsValid() ) {
+    } else if ( event.typeIsViewValidChanged() && !this.editorService.viewIsValid() ) {
       this.clearResults();
     }
   }

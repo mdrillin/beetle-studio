@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { Subscription } from "rxjs/Subscription";
+import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -26,17 +28,37 @@ import { ViewEditorService } from "@dataservices/virtualization/view-editor/view
   templateUrl: "./view-editor-header.component.html",
   styleUrls: ["./view-editor-header.component.css"]
 })
-export class ViewEditorHeaderComponent implements OnInit {
+export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
 
   private logger: LoggerService;
   private editorService: ViewEditorService;
+  private subscription: Subscription;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
     this.editorService = editorService;
     this.logger = logger;
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
+  /**
+   * @param {ViewEditorEvent} event the event being processed
+   */
+  public handleEditorEvent( event: ViewEditorEvent ): void {
+    // TODO implement
+    this.logger.debug( "ViewEditorHeaderComponent received event: " + event.toString() );
+  }
+
+  /**
+   * Cleanup code when destroying the view editor header.
+   */
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  /**
+   * Initialization code run after construction.
+   */
   public ngOnInit(): void {
     // nothing to do
   }
@@ -79,9 +101,7 @@ export class ViewEditorHeaderComponent implements OnInit {
       return this.editorService.getViewName();
     }
 
-    // should always have a view so shouldn't get here
-    this.logger.debug( "View editor service does not have a selected view" );
-    return "< unknown >";
+    return "";
   }
 
   /**
@@ -104,15 +124,14 @@ export class ViewEditorHeaderComponent implements OnInit {
    * @returns {string} the name of the dataservice of the view being edited
    */
   public get virtualizationName(): string {
-    const virtName = this.editorService.getEditorVirtualization();
+    const virtualization = this.editorService.getEditorVirtualization();
 
-    if ( virtName ) {
-      return virtName.getId();
+    if ( virtualization ) {
+      return virtualization.getId();
     }
 
     // should always have a virtualization name so shouldn't get here
-    this.logger.debug( "View editor service does not have a selected virtualizaiton" );
-    return "< unknown >";
+    return "< error >";
   }
 
 }

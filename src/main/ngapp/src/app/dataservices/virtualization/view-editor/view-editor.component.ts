@@ -25,6 +25,8 @@ import { QueryResults } from "@dataservices/shared/query-results.model";
 import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
+import { Message } from "@dataservices/virtualization/view-editor/message-log/message";
+import { Problem } from "@dataservices/virtualization/view-editor/message-log/problem";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -41,7 +43,9 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   public showDescription = false;
   public toolbarConfig: ToolbarConfig;
 
+  private actionConfig: ActionConfig;
   private editorService: ViewEditorService;
+  private isNewView = false;
   private logger: LoggerService;
   private subscription: Subscription;
 
@@ -72,9 +76,24 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
 
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
-    this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
-    this.editorService.setEditorView( selectionService.getSelectedView() );
     this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+
+    if ( selectionService.getSelectedVirtualization() ) {
+      this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
+    } else {
+      // must have a virtualization selected
+      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorEventSource.EDITOR );
+    }
+
+    if ( selectionService.getSelectedView() ) {
+      this.editorService.setEditorView( selectionService.getSelectedView(), ViewEditorEventSource.EDITOR );
+
+      if ( this.editorService.getViewName().length === 0 ) {
+        this.editorService.addMessage( Message.create( Problem.ERR0110 ), ViewEditorEventSource.EDITOR );
+      }
+    } else {
+      this.isNewView = true;
+    }
   }
 
   private canAddComposition(): boolean {
@@ -98,8 +117,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   private canSave(): boolean {
-    // TODO implement canSave
-    return this.isShowingCanvas;
+    return this.isShowingCanvas && this.editorService.hasChanges();
   }
 
   private canUndo(): boolean {
@@ -109,19 +127,32 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
 
   private doAddComposition(): void {
     // TODO implement doAddComposition
+    alert( "Display add composition dialog" );
   }
 
   private doAddSource(): void {
     // TODO implement doAddSource
+    alert( "Display add source tree dialog" );
   }
 
   private doDelete(): void {
     // TODO implement doDelete
+    alert( "Display delete confirmation dialog" );
   }
 
   private doDisplayLogMessages( actionId: string ): void {
-    // TODO remove below line and implement doDisplayLogMessages
-    this.editorService.setReadOnly( !this.editorService.isReadOnly(), ViewEditorEventSource.EDITOR );
+    // TODO remove this code and alert when properly implemented
+    let messages = "";
+
+    for ( const msg of this.editorService.getMessages() ) {
+      messages += msg.toString() + "\n";
+    }
+
+    if ( messages.length === 0 ) {
+      messages = "< no messages to display >";
+    }
+
+    alert( messages );
 
     switch ( actionId ) {
       case this.errorsActionId:
@@ -137,14 +168,17 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
 
   private doRedo(): void {
     // TODO implement doRedo
+    this.logger.debug( "doRedo() here" );
   }
 
   private doSave(): void {
     // TODO implement doSave
+    this.logger.debug( "doSave() here" );
   }
 
   private doUndo(): void {
     // TODO implement doUndo
+    this.logger.debug( "doUndo() here" );
   }
 
   /**
@@ -163,6 +197,13 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
    */
   public get editorCssType(): string {
     return this.editorService.getEditorConfig();
+  }
+
+  /**
+   * @returns {number} the number of error messages
+   */
+  public get errorMsgCount(): number {
+    return this.editorService.getErrorMessageCount();
   }
 
   /**
@@ -188,75 +229,78 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
                           errorsTemplate: TemplateRef< any >,
                           warningsTemplate: TemplateRef< any >,
                           infosTemplate: TemplateRef< any > ): ActionConfig {
-    return {
-      primaryActions: [
-        {
-          disabled: !this.canAddSource(),
-          id: this.addSourceActionId,
-          template: addSourceTemplate,
-          title: "Add Source",
-          tooltip: "Add Source"
-        },
-        {
-          disabled: !this.canAddComposition(),
-          id: this.addCompositionActionId,
-          template: addCompositionTemplate,
-          title: "Add Composition",
-          tooltip: "Add Composition"
-        },
-        {
-          disabled: !this.canUndo(),
-          id: this.undoActionId,
-          template: undoTemplate,
-          title: "Undo",
-          tooltip: "Undo"
-        },
-        {
-          disabled: !this.canRedo(),
-          id: this.redoActionId,
-          template: redoTemplate,
-          title: "Redo",
-          tooltip: "Redo"
-        },
-        {
-          disabled: !this.canSave(),
-          id: this.saveActionId,
-          template: saveTemplate,
-          title: "Save",
-          tooltip: "Save"
-        },
-        {
-          disabled: !this.canDelete(),
-          id: this.deleteActionId,
-          template: deleteTemplate,
-          title: "Delete",
-          tooltip: "Delete the selection"
-        },
-        {
-          disabled: !this.hasErrors(),
-          id: this.errorsActionId,
-          template: errorsTemplate,
-          title: "Errors",
-          tooltip: "Error messages"
-        },
-        {
-          disabled: !this.hasWarnings(),
-          id: this.warningsActionId,
-          template: warningsTemplate,
-          title: "Warnings",
-          tooltip: "Warning messages"
-        },
-        {
-          disabled: !this.hasInfos(),
-          id: this.infosActionId,
-          template: infosTemplate,
-          title: "Infos",
-          tooltip: "Info messages"
-        }
-      ],
-      moreActions: [
-      ],
-    } as ActionConfig;
+    if ( !this.actionConfig ) {
+      this.actionConfig = {
+        primaryActions: [
+          {
+            disabled: !this.canAddSource(),
+            id: this.addSourceActionId,
+            template: addSourceTemplate,
+            title: "Add Source",
+            tooltip: "Add Source"
+          },
+          {
+            disabled: !this.canAddComposition(),
+            id: this.addCompositionActionId,
+            template: addCompositionTemplate,
+            title: "Add Composition",
+            tooltip: "Add Composition"
+          },
+          {
+            disabled: !this.canUndo(),
+            id: this.undoActionId,
+            template: undoTemplate,
+            title: "Undo",
+            tooltip: "Undo"
+          },
+          {
+            disabled: !this.canRedo(),
+            id: this.redoActionId,
+            template: redoTemplate,
+            title: "Redo",
+            tooltip: "Redo"
+          },
+          {
+            disabled: !this.canSave(),
+            id: this.saveActionId,
+            template: saveTemplate,
+            title: "Save",
+            tooltip: "Save"
+          },
+          {
+            disabled: !this.canDelete(),
+            id: this.deleteActionId,
+            template: deleteTemplate,
+            title: "Delete",
+            tooltip: "Delete the selection"
+          },
+          {
+            disabled: !this.hasErrors(),
+            id: this.errorsActionId,
+            template: errorsTemplate,
+            title: "Errors",
+            tooltip: "Error messages"
+          },
+          {
+            disabled: !this.hasWarnings(),
+            id: this.warningsActionId,
+            template: warningsTemplate,
+            title: "Warnings",
+            tooltip: "Warning messages"
+          },
+          {
+            disabled: !this.hasInfos(),
+            id: this.infosActionId,
+            template: infosTemplate,
+            title: "Infos",
+            tooltip: "Info messages"
+          }
+        ],
+        moreActions: [],
+      } as ActionConfig;
+    }
+
+    return this.actionConfig;
   }
 
   /**
@@ -265,7 +309,6 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
    * @param {Action} action the toolbar action that was clicked
    */
   public handleAction( action: Action ): void {
-    console.error( "blah blah blah" );
     switch ( action.id ) {
       case this.addCompositionActionId:
         this.doAddComposition();
@@ -303,6 +346,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
+    // TODO implement
     this.logger.debug( "ViewEditorComponent received event: " + event.toString() );
   }
 
@@ -319,6 +363,13 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private hasWarnings(): boolean {
     // TODO implement hasWarnings
     return true;
+  }
+
+  /**
+   * @returns {number} the number of informational messages
+   */
+  public get infoMsgCount(): number {
+    return this.editorService.getInfoMessageCount();
   }
 
   /**
@@ -621,6 +672,13 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
     };
     const results = new QueryResults( employeeJson );
     this.editorService.setPreviewResults( results, ViewEditorEventSource.EDITOR );
+  }
+
+  /**
+   * @returns {number} the number of warning messages
+   */
+  public get warningMsgCount(): number {
+    return this.editorService.getWarningMessageCount();
   }
 
 }

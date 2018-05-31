@@ -64,10 +64,52 @@ export class ViewEditorEvent {
   }
 
   /**
+   * @returns {boolean} `true` if the canvas editor part was the source of the event
+   */
+  public sourceIsCanvas(): boolean {
+    return this.source === ViewEditorEventSource.CANVAS;
+  }
+
+  /**
+   * @returns {boolean} `true` if the editor was the source of the event
+   */
+  public sourceIsEditor(): boolean {
+    return this.source === ViewEditorEventSource.EDITOR;
+  }
+
+  /**
+   * @returns {boolean} `true` if the header editor part was the source of the event
+   */
+  public sourceIsHeader(): boolean {
+    return this.source === ViewEditorEventSource.HEADER;
+  }
+
+  /**
+   * @returns {boolean} `true` if the message log part was the source of the event
+   */
+  public sourceIsMessageLog(): boolean {
+    return this.source === ViewEditorEventSource.MESSAGE_LOG;
+  }
+
+  /**
+   * @returns {boolean} `true` if the preview editor part was the source of the event
+   */
+  public sourceIsPreview(): boolean {
+    return this.source === ViewEditorEventSource.PREVIEW;
+  }
+
+  /**
+   * @returns {boolean} `true` if the properties editor part was the source of the event
+   */
+  public sourceIsProperties(): boolean {
+    return this.source === ViewEditorEventSource.PROPERTIES;
+  }
+
+  /**
    * @returns {string} a string representation of the event
    */
   public toString(): string {
-    return `type: ${this.type}, source: ${this.source}, arg count: ${this.args.length}`;
+    return `event type: ${this.type}, source: ${this.source}, arg count: ${this.args.length}`;
   }
 
   /**
@@ -75,6 +117,83 @@ export class ViewEditorEvent {
    */
   public get type(): ViewEditorEventType {
     return this._type;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.CANVAS_SELECTION_CHANGED`
+   */
+  public typeIsCanvasSelectionChanged(): boolean {
+    return this.type === ViewEditorEventType.CANVAS_SELECTION_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITOR_CONFIG_CHANGED`
+   */
+  public typeIsEditorConfigChanged(): boolean {
+    return this.type === ViewEditorEventType.EDITOR_CONFIG_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGE_ADDED`
+   */
+  public typeIsLogMessageAdded(): boolean {
+    return this.type === ViewEditorEventType.LOG_MESSAGE_ADDED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGE_DELETED`
+   */
+  public typeIsLogMessageDeleted(): boolean {
+    return this.type === ViewEditorEventType.LOG_MESSAGE_DELETED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGES_CLEARED`
+   */
+  public typeIsLogMessagesCleared(): boolean {
+    return this.type === ViewEditorEventType.LOG_MESSAGES_CLEARED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.PREVIEW_RESULTS_CHANGED`
+   */
+  public typeIsPreviewResultsChanged(): boolean {
+    return this.type === ViewEditorEventType.PREVIEW_RESULTS_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.READONLY_CHANGED`
+   */
+  public typeIsReadonlyChanged(): boolean {
+    return this.type === ViewEditorEventType.READONLY_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_CHANGED`
+   */
+  public typeIsViewChanged(): boolean {
+    return this.type === ViewEditorEventType.VIEW_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_DESCRIPTION_CHANGED`
+   */
+  public typeIsViewDescriptionChanged(): boolean {
+    return this.type === ViewEditorEventType.VIEW_DESCRIPTION_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_NAME_CHANGED`
+   */
+  public typeIsViewNameChanged(): boolean {
+    return this.type === ViewEditorEventType.VIEW_NAME_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_VALID_CHANGED`
+   */
+  public typeIsViewValidChanged(): boolean {
+    return this.type === ViewEditorEventType.VIEW_VALID_CHANGED;
   }
 
 }

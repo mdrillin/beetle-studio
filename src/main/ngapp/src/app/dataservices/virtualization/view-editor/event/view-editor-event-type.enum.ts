@@ -28,6 +28,21 @@ export enum ViewEditorEventType {
   EDITOR_CONFIG_CHANGED = "EDITOR_CONFIG_CHANGED",
 
   /**
+   * An event indicating a log message has been added.
+   */
+  LOG_MESSAGE_ADDED = "LOG_MESSAGE_ADDED",
+
+  /**
+   * An event indicating a log message has been deleted.
+   */
+  LOG_MESSAGE_DELETED = "LOG_MESSAGE_DELETED",
+
+  /**
+   * An event indicating all log messages have been deleted.
+   */
+  LOG_MESSAGES_CLEARED = "LOG_MESSAGES_CLEARED",
+
+  /**
    * An event indicating the preview results have changed.
    */
   PREVIEW_RESULTS_CHANGED = "PREVIEW_RESULTS_CHANGED",
@@ -36,6 +51,11 @@ export enum ViewEditorEventType {
    * An event indication the editor's readonly property has changed.
    */
   READONLY_CHANGED = "READONLY_CHANGED",
+
+  /**
+   * An event indicating the view has been set.
+   */
+  VIEW_CHANGED = "VIEW_CHANGED",
 
   /**
    * An event indicating the view description has changed.

@@ -49,6 +49,7 @@
  */
 #view-editor-edit-container {
   grid-area: canvas;
+  overflow-y: auto;
 }
 
 /*
@@ -84,7 +85,7 @@
  */
 #view-editor-results-container {
   grid-area: results;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 /*
