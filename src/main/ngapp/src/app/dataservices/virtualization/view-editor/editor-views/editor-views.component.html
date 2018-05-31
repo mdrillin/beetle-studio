@@ -1,0 +1,16 @@
+<tabset>
+  <tab (select)="onSelect($event)">
+    <ng-template tabHeading class="editor-views-tab-heading">
+      <span class="fa fa-list-alt editor-views-tab-icon"></span>
+      Preview
+    </ng-template>
+    <app-view-preview></app-view-preview>
+  </tab>
+  <tab (select)="onSelect($event)">
+    <ng-template tabHeading class="editor-views-tab-heading">
+      <span class="pficon pficon-info editor-views-tab-icon"></span>
+      Messages
+    </ng-template>
+    <app-message-log></app-message-log>
+  </tab>
+</tabset>

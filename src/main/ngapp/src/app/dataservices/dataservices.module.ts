@@ -56,13 +56,12 @@ import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
 import { PatternFlyNgModule } from "patternfly-ng";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
-import { BsDropdownModule } from 'ngx-bootstrap';
-import { AccordionModule } from 'ngx-bootstrap';
-import { TooltipModule } from 'ngx-bootstrap';
+import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
 import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
 import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
 import { VirtualizationComponent } from "./virtualization/virtualization.component";
 import { MessageLogComponent } from './virtualization/view-editor/message-log/message-log.component';
+import { EditorViewsComponent } from './virtualization/view-editor/editor-views/editor-views.component';
 
 @NgModule({
   imports: [
@@ -78,7 +77,8 @@ import { MessageLogComponent } from './virtualization/view-editor/message-log/me
     TreeModule,
     BsDropdownModule.forRoot(),
     AccordionModule.forRoot(),
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    TabsModule.forRoot()
   ],
   declarations: [
     DataservicesDetailsComponent,
@@ -103,7 +103,8 @@ import { MessageLogComponent } from './virtualization/view-editor/message-log/me
     VirtualizationComponent,
     ViewCardsComponent,
     ViewCardComponent,
-    MessageLogComponent
+    MessageLogComponent,
+    EditorViewsComponent
   ],
   providers: [
     {
