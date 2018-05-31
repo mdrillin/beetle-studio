@@ -25,8 +25,8 @@ import { QueryResults } from "@dataservices/shared/query-results.model";
 import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { Message } from "@dataservices/virtualization/view-editor/message-log/message";
-import { Problem } from "@dataservices/virtualization/view-editor/message-log/problem";
+import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
+import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -54,7 +54,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   //
   private readonly canvasOnlyCssType = "view-editor-canvas-only";
   private readonly fullEditorCssType = "view-editor-full";
-  private readonly resultsOnlyCssType = "view-editor-results-only";
+  private readonly resultsOnlyCssType = "view-editor-views-only";
 
   //
   // Toolbar action IDs

@@ -1,0 +1,12 @@
+#editor-views-container {
+
+}
+
+.editor-views-tab-heading {
+  margin: 0;
+  padding: 0;
+}
+
+.editor-views-tab-icon:after {
+  margin-right: 2px;
+}

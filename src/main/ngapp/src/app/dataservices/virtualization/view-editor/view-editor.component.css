@@ -15,7 +15,7 @@
 }
 
 /*
- * A view editor area (i.e., heading, canvas, properties, results).
+ * A view editor area (i.e., heading, canvas, properties, editor views).
  */
 .view-editor-area {
   background-color: #ededed;
@@ -31,8 +31,12 @@
   background-color: white;
 }
 
+#view-editor-breadcrumbs .breadcrumb {
+  padding: 2px 0;
+}
+
 /*
- * A view editor showing only header, toolbar, canvas, and properties areas (missing results).
+ * A view editor showing only header, toolbar, canvas, and properties areas (missing editor views).
  */
 .view-editor-canvas-only {
   grid-template-areas:
@@ -45,7 +49,7 @@
 }
 
 /*
- * View editor bottom section containing live sample results.
+ * View editor bottom section containing live sample results, message log, and maybe others.
  */
 #view-editor-edit-container {
   grid-area: canvas;
@@ -53,7 +57,7 @@
 }
 
 /*
- * A view editor showing all areas (header, toolbar, canvas, properties, and results).
+ * A view editor showing all areas (header, toolbar, canvas, properties, and editor views).
  */
 .view-editor-full {
   grid-template-areas:
@@ -61,9 +65,9 @@
     "header"
     "toolbar"
     "canvas"
-    "results";
+    "editor-views";
   grid-template-columns: 1fr;
-  grid-template-rows: 5fr 10fr 5fr 60fr 20fr;
+  grid-template-rows: 1fr 10fr 3fr 60fr 26fr;
 }
 
 /*
@@ -81,22 +85,14 @@
 }
 
 /*
- * View editor bottom section containing live sample results.
+ * A view editor showing only header, toolbar, and editor views areas (missing canvas and properties).
  */
-#view-editor-results-container {
-  grid-area: results;
-  overflow-y: auto;
-}
-
-/*
- * A view editor showing only header, toolbar, and results areas (missing canvas and properties).
- */
-.view-editor-results-only {
+.view-editor-views-only {
   grid-template-areas:
     "dataservices-breadcrumb-bar"
     "header"
     "toolbar"
-    "results";
+    "editor-views";
   grid-template-columns: 1fr;
   grid-template-rows: 5fr 10fr 5fr 80fr;
 }
@@ -123,4 +119,12 @@
   border: none;
   box-shadow: none;
   padding: 0;
+}
+
+/*
+ * View editor bottom section containing live sample results, message log, and maybe others.
+ */
+#view-editor-views-container {
+  grid-area: editor-views;
+  overflow-y: auto;
 }

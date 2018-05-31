@@ -23,8 +23,8 @@ import { View } from "@dataservices/shared/view.model";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
-import { Message } from "@dataservices/virtualization/view-editor/message-log/message";
-import { Problem } from "@dataservices/virtualization/view-editor/message-log/problem";
+import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
+import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 
 @Injectable()
 export class ViewEditorService {
