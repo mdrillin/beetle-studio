@@ -322,7 +322,7 @@ export class VirtualizationComponent implements OnInit {
       this.viewPropertyForm.get("name").disable();
     }
     this.viewPropertyForm.controls["name"].setValue(name);
-    this.viewPropertyForm.controls["description"].setValue(name);
+    this.viewPropertyForm.controls["description"].setValue(descr);
   }
 
   /*
