@@ -13,10 +13,32 @@
     <form [formGroup]="viewPropertyForm" class="form-horizontal">
       <div [ngClass]="nameValid ? 'form-group' : 'form-group has-error'">
         <label class="col-sm-2 control-label required-pf">Name</label>
-        <div class="col-sm-7">
+        <div class="col-sm-6">
           <input class="form-control" formControlName="name" title="">
           <div class="help-block" *ngIf="!nameValid">{{ nameValidationError }}</div>
         </div>
+        <span *ngIf="!nameValid"
+              class="col-sm-1 fa fa-2x fa-exclamation-circle"
+              style="color:darkred"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="The name is invalid">
+        </span>
+        <span *ngIf="hasPendingNameChange && nameValid"
+              class="col-sm-1 fa fa-2x fa-save"
+              style="color:blue"
+              (click)="onSaveName( )"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="Save the name">
+        </span>
+        <span *ngIf="!hasPendingNameChange && nameValid"
+              class="col-sm-1 fa fa-2x fa-check"
+              style="color:darkgreen"
+              data-toggle="tooltip"
+              data-placement="right"
+              title="The name is valid">
+        </span>
       </div>
       <div [ngClass]="'form-group'">
         <label class="col-sm-2 control-label">Description</label>
@@ -29,8 +51,24 @@
     <!-- Blank State or Card View -->
     <div class="row object-collection-page">
 
+      <!-- Create Virtualization in progress -->
+      <div class="row" *ngIf="createInProgress">
+        <div class="spinner spinner-lg blank-slate-pf-icon"></div>
+      </div>
+
+      <!-- Blank State for new virtualization -->
+      <div class="row" *ngIf="!createInProgress && isNew" >
+        <div class="col-sm-12">
+          <div class="form-group">
+            <pfng-empty-state
+              [config]="newVirtualizationConfig">
+            </pfng-empty-state>
+          </div>
+        </div>
+      </div>
+
       <!-- Blank State if no views -->
-      <div class="row" *ngIf="views.length === 0" >
+      <div class="row" *ngIf="!createInProgress && !isNew && views.length === 0" >
         <div class="col-sm-12">
           <div class="form-group">
             <pfng-empty-state

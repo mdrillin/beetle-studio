@@ -25,7 +25,14 @@
             title="Invalid">
       </span>
       <span class="pull-right fa fa-edit card-action-icon"
+            *ngIf="view.editable"
             (click)="onClick(editEvent)"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Edit">
+      </span>
+      <span class="pull-right fa fa-edit card-action-icon-disabled"
+            *ngIf="!view.editable"
             data-toggle="tooltip"
             data-placement="right"
             title="Edit">
@@ -33,7 +40,8 @@
     </div>
     <div class="row card-pf-title text-center object-card-title">
       <div class="fa fa-table object-inline-icon"></div>
-      <a [routerLink]="[view.getName()]" (click)="onClick(editEvent)">{{ view.getName() }}</a>
+      <a *ngIf="view.editable" [routerLink]="[view.getName()]" (click)="onClick(editEvent)">{{ view.getName() }}</a>
+      <a *ngIf="!view.editable">{{ view.getName() }}</a>
     </div>
     <div class="row">
       <div class="object-card-description">{{ view.getDescription() }}</div>

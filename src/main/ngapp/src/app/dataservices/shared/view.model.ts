@@ -23,11 +23,9 @@ import { Connection } from "@connections/shared/connection.model";
 export class View {
   private name: string;
   private description: string;
-  private connection: Connection;
-  private catalogName: string;
-  private schemaName: string;
   private isSelected = false;
   private isValid = false;
+  private isEditable = false;
 
   constructor() {
     // nothing to do
@@ -62,48 +60,6 @@ export class View {
   }
 
   /**
-   * @returns {Connection} the connection for the table
-   */
-  public getConnection(): Connection {
-    return this.connection;
-  }
-
-  /**
-   * @param {string} connection the connection for the table
-   */
-  public setConnection( connection?: Connection ): void {
-    this.connection = connection ? connection : null;
-  }
-
-  /**
-   * @returns {string} the catalog name for the table
-   */
-  public getCatalogName(): string {
-    return this.catalogName;
-  }
-
-  /**
-   * @param {string} catalogName the connection name for the table
-   */
-  public setCatalogName( catalogName?: string ): void {
-    this.catalogName = catalogName ? catalogName : null;
-  }
-
-  /**
-   * @returns {string} the schema name for the table
-   */
-  public getSchemaName(): string {
-    return this.schemaName;
-  }
-
-  /**
-   * @param {string} schemaName the schema name for the table
-   */
-  public setSchemaName( schemaName?: string ): void {
-    this.schemaName = schemaName ? schemaName : null;
-  }
-
-  /**
    * Determine whether the view is in a valid state
    * @returns {boolean} true if valid
    */
@@ -123,6 +79,20 @@ export class View {
    */
   public set selected( selected: boolean ) {
     this.isSelected = selected;
+  }
+
+  /**
+   * @returns {boolean} true if editable
+   */
+  public get editable(): boolean {
+    return this.isEditable;
+  }
+
+  /**
+   * @param {boolean} editable 'true' if editable
+   */
+  public set editable( editable: boolean ) {
+    this.isEditable = editable;
   }
 
 }
