@@ -3,7 +3,7 @@
  */
 #view-editor {
   align-content: stretch;
-  background-color: #d1d1d1;
+  background-color: var(--page-background-color);
   display: grid;
   grid-column-gap: 0;
   grid-row-gap: 0;
@@ -19,8 +19,7 @@
  */
 .view-editor-area {
   background-color: #ededed;
-  border: 2px solid #bbbbbb;
-  border-radius: 8px;
+  border: 1px solid #bbbbbb;
   padding: 0 20px;
 }
 
@@ -29,10 +28,6 @@
  */
 #view-editor-breadcrumbs {
   background-color: white;
-}
-
-#view-editor-breadcrumbs .breadcrumb {
-  padding: 2px 0;
 }
 
 /*
@@ -109,6 +104,13 @@
  */
 #view-editor-toolbar .form-group {
   margin: 2px;
+}
+
+/*
+ * Make the toolbar buttons smaller.
+ */
+.view-editor-toolbar-icon {
+  font-size: xx-small;
 }
 
 /*

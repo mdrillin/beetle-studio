@@ -4,8 +4,7 @@
   <!-- ================================= -->
   <!-- ========== Breadcrumbs ========== -->
   <!-- ================================= -->
-  <div class="view-editor-area"
-       id="view-editor-breadcrumbs">
+  <div id="view-editor-breadcrumbs">
     <app-breadcrumbs>
       <li app-breadcrumb label="Data Virtualizations" icon="table" [route]="[ virtualizationsLink ]"></li>
       <li app-breadcrumb label="Virtualization" icon="sitemap" [route]="[ virtualizationLink ]"></li>
@@ -43,34 +42,34 @@
                                          infosTemplate)"
                (onActionSelect)="handleAction($event)">
             <ng-template #addSourceTemplate let-action="action">
-              <span class="fa fa-database"></span>
-              <span class="fa fa-plus"></span>
+              <span class="fa fa-database view-editor-toolbar-icon"></span>
+              <span class="fa fa-plus view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #addCompositionTemplate let-action="action">
-              <span class="fa fa-angle-left"></span>
-              <span class="fa fa-angle-right"></span>
-              <span class="fa fa-plus"></span>
+              <span class="fa fa-angle-left view-editor-toolbar-icon"></span>
+              <span class="fa fa-angle-right view-editor-toolbar-icon"></span>
+              <span class="fa fa-plus view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #undoTemplate let-action="action">
-              <span class="fa fa-rotate-left"></span>
+              <span class="fa fa-rotate-left view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #redoTemplate let-action="action">
-              <span class="fa fa-rotate-right"></span>
+              <span class="fa fa-rotate-right view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #saveTemplate let-action="action">
-              <span class="pficon pficon-save"></span>
+              <span class="pficon pficon-save view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #deleteTemplate let-action="action">
-              <span class="pficon pficon-delete"></span>
+              <span class="pficon pficon-delete view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #errorsTemplate let-action="action">
-              <span class="pficon pficon-error-circle-o badge-pf-bordered">{{errorMsgCount}}</span>
+              <span class="pficon pficon-error-circle-o badge-pf-bordered view-editor-toolbar-icon">{{errorMsgCount}}</span>
             </ng-template>
             <ng-template #warningsTemplate let-action="action">
-              <span class="pficon pficon-warning-triangle-o badge-pf-bordered">{{warningMsgCount}}</span>
+              <span class="pficon pficon-warning-triangle-o badge-pf-bordered view-editor-toolbar-icon">{{warningMsgCount}}</span>
             </ng-template>
             <ng-template #infosTemplate let-action="action">
-              <span class="pficon pficon-info badge-pf-bordered">{{infoMsgCount}}</span>
+              <span class="pficon pficon-info badge-pf-bordered view-editor-toolbar-icon">{{infoMsgCount}}</span>
             </ng-template>
           </pfng-action>
         </ng-template>

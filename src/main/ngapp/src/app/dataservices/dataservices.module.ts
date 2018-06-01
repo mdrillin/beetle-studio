@@ -49,6 +49,8 @@ import { ViewCanvasComponent } from "@dataservices/virtualization/view-editor/vi
 import { ViewEditorHeaderComponent } from "@dataservices/virtualization/view-editor/view-editor-header/view-editor-header.component";
 import { ViewEditorComponent } from "@dataservices/virtualization/view-editor/view-editor.component";
 import { ViewPreviewComponent } from "@dataservices/virtualization/view-editor/editor-views/view-preview/view-preview.component";
+import { EditorViewsComponent } from '@dataservices/virtualization/view-editor/editor-views/editor-views.component';
+import { MessageLogComponent } from '@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component';
 import { environment } from "@environments/environment";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
@@ -60,8 +62,6 @@ import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ng
 import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
 import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
 import { VirtualizationComponent } from "./virtualization/virtualization.component";
-import { MessageLogComponent } from "@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component";
-import { EditorViewsComponent } from './virtualization/view-editor/editor-views/editor-views.component';
 
 @NgModule({
   imports: [
