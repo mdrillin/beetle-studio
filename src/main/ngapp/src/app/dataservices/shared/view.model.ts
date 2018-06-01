@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Connection } from "@connections/shared/connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 
 /**
  * View model
@@ -26,6 +26,7 @@ export class View {
   private isSelected = false;
   private isValid = false;
   private isEditable = false;
+  private sources: SchemaNode[] = [];
 
   constructor() {
     // nothing to do
@@ -57,6 +58,20 @@ export class View {
    */
   public setDescription( description?: string ): void {
     this.description = description ? description : null;
+  }
+
+  /**
+   * @returns {SchemaNode[]} the view sources
+   */
+  public getSources(): SchemaNode[] {
+    return this.sources;
+  }
+
+  /**
+   * @param {SchemaNode[]} sources the view sources
+   */
+  public setSources( sources: SchemaNode[] ): void {
+    this.sources = sources;
   }
 
   /**

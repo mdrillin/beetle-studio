@@ -73,6 +73,11 @@ export enum ViewEditorEventType {
   VIEW_NAME_CHANGED = "VIEW_NAME_CHANGED",
 
   /**
+   * An event indicating the view sources have changed.
+   */
+  VIEW_SOURCES_CHANGED = "VIEW_SOURCES_CHANGED",
+
+  /**
    * An event indication the view validation status has changed.
    * @type {string}
    */
