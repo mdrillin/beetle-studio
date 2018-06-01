@@ -25,6 +25,7 @@ import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
+import {SchemaNode} from "@connections/shared/schema-node.model";
 
 @Injectable()
 export class ViewEditorService {
@@ -292,6 +293,19 @@ export class ViewEditorService {
                              source: ViewEditorEventSource ): void {
     this._editorView.setDescription( newDescription );
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_DESCRIPTION_CHANGED, [ newDescription ] ) );
+  }
+
+  /**
+   * Sets the view sources to the new value. Fires a `ViewEditorEventType.VIEW_SOURCES_CHANGED` event
+   * having the new sources as an argument.
+   *
+   * @param {SchemaNode[]} newSources the array of new view sources
+   * @param {ViewEditorEventSource} source the source making the update
+   */
+  public setViewSources( newSources: SchemaNode[],
+                         source: ViewEditorEventSource ): void {
+    this._editorView.setSources( newSources );
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_SOURCES_CHANGED, [ newSources ] ) );
   }
 
   /**

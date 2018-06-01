@@ -62,6 +62,8 @@ import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ng
 import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
 import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
 import { VirtualizationComponent } from "./virtualization/virtualization.component";
+import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/connection-table-dialog/connection-tree-selector/connection-tree-selector.component';
+import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
 
 @NgModule({
   imports: [
@@ -104,7 +106,9 @@ import { VirtualizationComponent } from "./virtualization/virtualization.compone
     ViewCardsComponent,
     ViewCardComponent,
     MessageLogComponent,
-    EditorViewsComponent
+    EditorViewsComponent,
+    ConnectionTreeSelectorComponent,
+    ConnectionTableDialogComponent
   ],
   providers: [
     {
@@ -126,7 +130,7 @@ import { VirtualizationComponent } from "./virtualization/virtualization.compone
   ],
   exports: [
   ],
-  entryComponents: [ConfirmDialogComponent]
+  entryComponents: [ConfirmDialogComponent, ConnectionTableDialogComponent]
 })
 export class DataservicesModule { }
 

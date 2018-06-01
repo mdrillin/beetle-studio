@@ -27,6 +27,10 @@ import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
+import { BsModalService } from "ngx-bootstrap";
+import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
+import {ConnectionTableDialogComponent} from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
+import {SchemaNode} from "@connections/shared/schema-node.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -47,6 +51,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private editorService: ViewEditorService;
   private isNewView = false;
   private logger: LoggerService;
+  private modalService: BsModalService;
   private subscription: Subscription;
 
   //
@@ -71,8 +76,10 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
 
   constructor( selectionService: SelectionService,
                logger: LoggerService,
-               editorService: ViewEditorService ) {
+               editorService: ViewEditorService,
+               modalService: BsModalService ) {
     this.logger = logger;
+    this.modalService = modalService;
 
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
@@ -131,13 +138,39 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   private doAddSource(): void {
-    // TODO implement doAddSource
-    alert( "Display add source tree dialog" );
+    // Open Source selection dialog
+    const initialState = {
+      title: "Select View Source",
+      cancelButtonText: "Cancel",
+      okButtonText: "OK"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
+    modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
+      this.editorService.setViewSources( selectedNodes, ViewEditorEventSource.EDITOR );
+    });
   }
 
   private doDelete(): void {
-    // TODO implement doDelete
-    alert( "Display delete confirmation dialog" );
+    // Dialog Content
+    const message = "Do you really want to delete View '" + this.editorService.getViewName() + "'?";
+    const initialState = {
+      title: "Confirm Delete",
+      bodyContent: message,
+      cancelButtonText: "Cancel",
+      confirmButtonText: "Delete"
+    };
+
+    // Show Dialog, act upon confirmation click
+    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    modalRef.content.confirmAction.take(1).subscribe((value) => {
+      this.deleteView();
+    });
+  }
+
+  private deleteView( ): void {
+    alert("Delete the view!");
   }
 
   private doDisplayLogMessages( actionId: string ): void {
