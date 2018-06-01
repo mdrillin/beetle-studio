@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { ViewPreviewComponent } from "./view-preview.component";
+import { PatternFlyNgModule } from "patternfly-ng";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { LoggerService } from "@core/logger.service";
 
 describe("ViewPreviewComponent", () => {
   let component: ViewPreviewComponent;
@@ -7,7 +10,9 @@ describe("ViewPreviewComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewPreviewComponent ]
+      imports: [ PatternFlyNgModule ],
+      declarations: [ ViewPreviewComponent ],
+      providers: [ LoggerService, ViewEditorService ]
     })
     .compileComponents();
   }));

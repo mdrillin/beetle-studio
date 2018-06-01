@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewEditorHeaderComponent } from './view-editor-header.component';
+import { FormsModule } from "@angular/forms";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { LoggerService } from "@core/logger.service";
 
 describe('ViewEditorHeaderComponent', () => {
   let component: ViewEditorHeaderComponent;
@@ -8,7 +11,9 @@ describe('ViewEditorHeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewEditorHeaderComponent ]
+      imports: [ FormsModule ],
+      declarations: [ ViewEditorHeaderComponent ],
+      providers: [ LoggerService, ViewEditorService ]
     })
     .compileComponents();
   }));

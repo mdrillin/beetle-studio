@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MessageLogComponent } from './message-log.component';
+import { PatternFlyNgModule } from "patternfly-ng";
+import { LoggerService } from "@core/logger.service";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 
 describe('MessageLogComponent', () => {
   let component: MessageLogComponent;
@@ -8,7 +11,9 @@ describe('MessageLogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MessageLogComponent ]
+      imports: [ PatternFlyNgModule ],
+      declarations: [ MessageLogComponent ],
+      providers: [ LoggerService, ViewEditorService ]
     })
     .compileComponents();
   }));

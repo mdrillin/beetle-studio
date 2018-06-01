@@ -26,8 +26,9 @@ export class VirtualizationComponent implements OnInit {
   public nameValidationError = "";
   public views: View[] = [];
   public selectedViews: View[] = [];
+  public createInProgress = false;
+  public showDescription = false;
 
-  private createInProgress = false;
   private selectionService: SelectionService;
   private dataserviceService: DataserviceService;
   private modalService: BsModalService;

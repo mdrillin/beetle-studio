@@ -1,11 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { ViewEditorService } from './view-editor.service';
+import { LoggerService } from "@core/logger.service";
 
 describe('ViewEditorSelectionService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ViewEditorService]
+      providers: [
+        LoggerService,
+        ViewEditorService
+      ]
     });
   });
 

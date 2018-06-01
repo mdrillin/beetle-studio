@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewCanvasComponent } from './view-canvas.component';
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { LoggerService } from "@core/logger.service";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -8,7 +10,11 @@ describe('ViewCanvasComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewCanvasComponent ]
+      declarations: [ ViewCanvasComponent ],
+      providers: [
+        LoggerService,
+        ViewEditorService
+      ]
     })
     .compileComponents();
   }));
