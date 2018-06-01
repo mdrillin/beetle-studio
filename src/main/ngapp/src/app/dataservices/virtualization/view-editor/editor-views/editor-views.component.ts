@@ -15,29 +15,91 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { TabDirective } from "ngx-bootstrap";
+import { Subscription } from "rxjs/Subscription";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
+import { LoggerService } from "@core/logger.service";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
+import { Task } from "protractor/built/taskScheduler";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: 'app-editor-views',
   templateUrl: './editor-views.component.html',
   styleUrls: ['./editor-views.component.css']
 })
-export class EditorViewsComponent implements OnInit {
+export class EditorViewsComponent implements OnInit, OnDestroy {
 
-  constructor() {
-    // nothing to do
+  private readonly previewIndex = 0;
+  private readonly messagesIndex = 1;
+
+  private readonly editorService: ViewEditorService;
+  private readonly logger: LoggerService;
+  private subscription: Subscription;
+
+  /**
+   * The tabs component configuration.
+   *
+   * @type {{heading: string; active: boolean}[]}
+   */
+  public tabs = [
+    {
+      "active": true
+    },
+    {
+      "active": false
+    },
+  ];
+
+  constructor( editorService: ViewEditorService,
+               logger: LoggerService ) {
+    this.editorService = editorService;
+    this.logger = logger;
+  }
+
+  /**
+   * @param {ViewEditorEvent} event the event being processed
+   */
+  public handleEditorEvent( event: ViewEditorEvent ): void {
+    this.logger.debug( "EditorViewsComponent received event: " + event.toString() );
+
+    if ( event.typeIsShowEditorPart() ) {
+      if ( event.args.length !== 0 ) {
+        if ( event.args[ 0 ] === ViewEditorPart.PREVIEW ) {
+          this.tabs[ this.messagesIndex ].active = false;
+          this.tabs[ this.previewIndex ].active = true;
+        } else if ( event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG ) {
+          this.tabs[ this.previewIndex ].active = false;
+          this.tabs[ this.messagesIndex ].active = true;
+        }
+      }
+    }
+  }
+
+  /**
+   * Cleanup code when destroying the view editor header.
+   */
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   /**
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
-    // nothing to do
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
-  public onSelect( tab: TabDirective ): void {
-    console.error( tab.heading );
+  /**
+   * Callback for when a tab is clicked.
+   *
+   * @param tab the tab being select or deselected
+   * @param selected `true` is selected
+   */
+  public tabSelected( tab, selected ): void {
+    tab.active = selected;
   }
 
 }

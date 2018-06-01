@@ -17,10 +17,10 @@
 
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -30,15 +30,15 @@ import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/
 })
 export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
 
-  private logger: LoggerService;
-  private editorService: ViewEditorService;
+  private readonly logger: LoggerService;
+  private readonly editorService: ViewEditorService;
+  public showDescription = false;
   private subscription: Subscription;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
     this.editorService = editorService;
     this.logger = logger;
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   /**
@@ -60,7 +60,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
-    // nothing to do
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   /**
@@ -81,7 +81,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    * @param {string} newDescription the new description
    */
   public set viewDescription( newDescription: string ) {
-    this.editorService.setViewDescription( newDescription, ViewEditorEventSource.HEADER );
+    this.editorService.setViewDescription( newDescription, ViewEditorPart.HEADER );
   }
 
   /**
@@ -108,7 +108,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    * @param {string} newName the new name of the view
    */
   public set viewName( newName: string ) {
-    this.editorService.setViewName( newName, ViewEditorEventSource.HEADER );
+    this.editorService.setViewName( newName, ViewEditorPart.HEADER );
   }
 
   /**

@@ -1,7 +1,7 @@
 /*
  * The container for the results table.
  */
-.view-preview-container {
+#view-preview-container {
   align-items: center;
   display: flex;
   height: 100%;
@@ -10,7 +10,7 @@
 /*
  * Style the empty state component so that it is centered and extends the entire width.
  */
-.view-preview-container .blank-slate-pf {
+#view-preview-container .blank-slate-pf {
   background-color: inherit;
   border: none;
   padding: 0;
@@ -19,6 +19,6 @@
 /*
  * Style the results table so that it extends the entire width.
  */
-.view-preview-table {
+#view-preview-table {
   width: 100%;
 }

@@ -15,30 +15,30 @@
  * limitations under the License.
  */
 
-import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 
 export class ViewEditorEvent {
 
   private readonly _args: any[] = [];
-  private readonly _source: ViewEditorEventSource;
+  private readonly _source: ViewEditorPart;
   private readonly _type: ViewEditorEventType;
 
   /**
    * Factory method to create an event.
    *
-   * @param {ViewEditorEventSource} source the source of the event
+   * @param {ViewEditorPart} source the source of the event
    * @param {ViewEditorEventType} type the type of event
    * @param {object[]} args the optional args
    * @returns {ViewEditorEvent} the created event
    */
-  public static create( source: ViewEditorEventSource,
+  public static create( source: ViewEditorPart,
                         type: ViewEditorEventType,
                         args?: any[] ): ViewEditorEvent {
     return new ViewEditorEvent( source, type, args );
   }
 
-  private constructor( source: ViewEditorEventSource,
+  private constructor( source: ViewEditorPart,
                        type: ViewEditorEventType,
                        args?: any[] ) {
     this._source = source;
@@ -57,9 +57,9 @@ export class ViewEditorEvent {
   }
 
   /**
-   * @returns {ViewEditorEventSource} the event source
+   * @returns {ViewEditorPart} the event source
    */
-  public get source(): ViewEditorEventSource {
+  public get source(): ViewEditorPart {
     return this._source;
   }
 
@@ -67,42 +67,42 @@ export class ViewEditorEvent {
    * @returns {boolean} `true` if the canvas editor part was the source of the event
    */
   public sourceIsCanvas(): boolean {
-    return this.source === ViewEditorEventSource.CANVAS;
+    return this.source === ViewEditorPart.CANVAS;
   }
 
   /**
    * @returns {boolean} `true` if the editor was the source of the event
    */
   public sourceIsEditor(): boolean {
-    return this.source === ViewEditorEventSource.EDITOR;
+    return this.source === ViewEditorPart.EDITOR;
   }
 
   /**
    * @returns {boolean} `true` if the header editor part was the source of the event
    */
   public sourceIsHeader(): boolean {
-    return this.source === ViewEditorEventSource.HEADER;
+    return this.source === ViewEditorPart.HEADER;
   }
 
   /**
    * @returns {boolean} `true` if the message log part was the source of the event
    */
   public sourceIsMessageLog(): boolean {
-    return this.source === ViewEditorEventSource.MESSAGE_LOG;
+    return this.source === ViewEditorPart.MESSAGE_LOG;
   }
 
   /**
    * @returns {boolean} `true` if the preview editor part was the source of the event
    */
   public sourceIsPreview(): boolean {
-    return this.source === ViewEditorEventSource.PREVIEW;
+    return this.source === ViewEditorPart.PREVIEW;
   }
 
   /**
    * @returns {boolean} `true` if the properties editor part was the source of the event
    */
   public sourceIsProperties(): boolean {
-    return this.source === ViewEditorEventSource.PROPERTIES;
+    return this.source === ViewEditorPart.PROPERTIES;
   }
 
   /**
@@ -166,6 +166,13 @@ export class ViewEditorEvent {
    */
   public typeIsReadonlyChanged(): boolean {
     return this.type === ViewEditorEventType.READONLY_CHANGED;
+  }
+
+  /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.SHOW_EDITOR_PART`
+   */
+  public typeIsShowEditorPart(): boolean {
+    return this.type === ViewEditorEventType.SHOW_EDITOR_PART;
   }
 
   /**

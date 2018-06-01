@@ -28,15 +28,14 @@ import { Subscription } from "rxjs/Subscription";
 })
 export class ViewCanvasComponent implements OnInit, OnDestroy {
 
-  private logger: LoggerService;
-  private editorService: ViewEditorService;
+  private readonly logger: LoggerService;
+  private readonly editorService: ViewEditorService;
   private subscription: Subscription;
 
   constructor( editorService: ViewEditorService,
                logger: LoggerService ) {
     this.editorService = editorService;
     this.logger = logger;
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   /**
@@ -58,7 +57,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
-    // nothing to do
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   /**

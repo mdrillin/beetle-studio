@@ -21,8 +21,8 @@ import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { View } from "@dataservices/shared/view.model";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 
@@ -54,10 +54,10 @@ export class ViewEditorService {
 
   /**
    * @param {Message} msg the message being added
-   * @param {ViewEditorEventSource} source the source that is adding the message
+   * @param {ViewEditorPart} source the source that is adding the message
    */
   public addMessage( msg: Message,
-                     source: ViewEditorEventSource ): void {
+                     source: ViewEditorPart ): void {
     this._messages.push( msg );
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_ADDED, [ msg ] ) );
   }
@@ -65,29 +65,31 @@ export class ViewEditorService {
   /**
    * Clears all log messages.
    *
-   * @param {ViewEditorEventSource} source the source that is deleting the message
+   * @param {ViewEditorPart} source the source that is deleting the message
    */
-  public clearMessages( source: ViewEditorEventSource ): void {
+  public clearMessages( source: ViewEditorPart ): void {
     this._messages.length = 0;
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED ) );
   }
 
   /**
    * @param {string} msgId the ID of the message being deleted
-   * @param {ViewEditorEventSource} source the source that is deleting the message
+   * @param {ViewEditorPart} source the source that is deleting the message
    */
   public deleteMessage( msgId: string,
-                        source: ViewEditorEventSource ): void {
+                        source: ViewEditorPart ): void {
     const index = this._messages.findIndex( ( msg ) => msg.id === msgId );
 
     if ( index !== -1 ) {
-      const msg = this._messages[ index ];
-      this._messages.splice( index, 1 );
-      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_DELETED, [ msg ] ) );
+      const deleted = this._messages.splice( index, 1 );
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_DELETED, [ deleted[ 0 ] ] ) );
     }
   }
 
-  private fire( event: ViewEditorEvent ): void {
+  /**
+   * @param {ViewEditorEvent} event the event to broadcast
+   */
+  public fire( event: ViewEditorEvent ): void {
     this._logger.debug( "firing event: " + event );
     this.editorEvent.emit( event );
   }
@@ -215,7 +217,7 @@ export class ViewEditorService {
   public setEditorConfig( newCssClass: string ): void {
     if ( this._editorConfig !== newCssClass ) {
       this._editorConfig = newCssClass;
-      this.fire( ViewEditorEvent.create( ViewEditorEventSource.EDITOR, ViewEditorEventType.EDITOR_CONFIG_CHANGED, [ newCssClass ] ) );
+      this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_CONFIG_CHANGED, [ newCssClass ] ) );
     }
   }
 
@@ -224,10 +226,10 @@ export class ViewEditorService {
    * `ViewEditorEventType.VIEW_CHANGED` event having the view as an argument.
    *
    * @param {View} view the view being edited
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setEditorView( view: View,
-                        source: ViewEditorEventSource ): void {
+                        source: ViewEditorPart ): void {
     if ( !this._editorView ) {
       this._editorView = view;
       this._initialDescription = this._editorView.getDescription();
@@ -258,10 +260,10 @@ export class ViewEditorService {
    * argument.
    *
    * @param {QueryResults} results the new preview results
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setPreviewResults( results: QueryResults,
-                            source: ViewEditorEventSource ): void {
+                            source: ViewEditorPart ): void {
     this._previewResults = results;
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.PREVIEW_RESULTS_CHANGED, [ results ] ) );
   }
@@ -271,10 +273,10 @@ export class ViewEditorService {
    * readonly property as an argument.
    *
    * @param {boolean} newReadOnly the new readonly value
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setReadOnly( newReadOnly: boolean,
-                      source: ViewEditorEventSource ): void {
+                      source: ViewEditorPart ): void {
     if ( this._readOnly !== newReadOnly ) {
       this._readOnly = newReadOnly;
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.READONLY_CHANGED, [ newReadOnly ] ) );
@@ -286,10 +288,10 @@ export class ViewEditorService {
    * having the new description as an argument.
    *
    * @param {string} newDescription the new view description
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setViewDescription( newDescription: string,
-                             source: ViewEditorEventSource ): void {
+                             source: ViewEditorPart ): void {
     this._editorView.setDescription( newDescription );
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_DESCRIPTION_CHANGED, [ newDescription ] ) );
   }
@@ -299,10 +301,10 @@ export class ViewEditorService {
    * having the new value as an argument.
    *
    * @param {string} newValidState the new view validation state
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setViewIsValid( newValidState: boolean,
-                         source: ViewEditorEventSource ): void {
+                         source: ViewEditorPart ): void {
     if ( this._viewIsValid !== newValidState ) {
       this._viewIsValid = newValidState;
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_DESCRIPTION_CHANGED, [ this._viewIsValid ] ) );
@@ -314,10 +316,10 @@ export class ViewEditorService {
    * as an argument.
    *
    * @param {string} newName the new view name
-   * @param {ViewEditorEventSource} source the source making the update
+   * @param {ViewEditorPart} source the source making the update
    */
   public setViewName( newName: string,
-                      source: ViewEditorEventSource ): void {
+                      source: ViewEditorPart ): void {
     this._editorView.setName( newName );
 
     const oldIsEmpty = this._viewNameIsEmpty;
