@@ -26,8 +26,8 @@ export class VirtualizationComponent implements OnInit {
   public nameValidationError = "";
   public views: View[] = [];
   public selectedViews: View[] = [];
-  private createInProgress = false;
 
+  private createInProgress = false;
   private selectionService: SelectionService;
   private dataserviceService: DataserviceService;
   private modalService: BsModalService;
@@ -35,7 +35,8 @@ export class VirtualizationComponent implements OnInit {
   private router: Router;
   private logger: LoggerService;
   private noViewsConfig: EmptyStateConfig;
-  private nameVirtualizationConfig: EmptyStateConfig;
+  private enterNameConfig: EmptyStateConfig;
+  private saveNameConfig: EmptyStateConfig;
   private currentVirtualization: Dataservice = null;
   private originalName: string;
   private newVirtualization: NewDataservice = null;
@@ -99,7 +100,11 @@ export class VirtualizationComponent implements OnInit {
    */
   public onSaveName( ): void {
     const theName = this.viewPropertyForm.controls["name"].value.toString();
-    const theDescription = this.viewPropertyForm.controls["description"].value.toString();
+    let theDescription = "";
+    const descr = this.viewPropertyForm.controls["description"].value;
+    if (descr != null) {
+      theDescription = descr.toString();
+    }
 
     // If this is a brand new dataservice, create it
     if (this.isNew) {
@@ -191,19 +196,35 @@ export class VirtualizationComponent implements OnInit {
   }
 
   /**
-   * The configuration for empty state with brand new virtualization.  (Prompts user to name the virtualization)
+   * Empty state config which prompts the user to name the virtualization.
    * @returns {EmptyStateConfig} the empty state config
    */
-  public get newVirtualizationConfig(): EmptyStateConfig {
-    if ( !this.nameVirtualizationConfig ) {
-      this.nameVirtualizationConfig = {
+  public get enterVirtualizationNameConfig(): EmptyStateConfig {
+    if ( !this.enterNameConfig ) {
+      this.enterNameConfig = {
         iconStyleClass: "pficon-warning-triangle-o",
-        info: "Please enter a name for the virtualization and save it",
-        title: "Enter VirtualizationName"
+        info: "Please enter a name for the virtualization",
+        title: "Enter Virtualization Name"
       } as EmptyStateConfig;
     }
 
-    return this.nameVirtualizationConfig;
+    return this.enterNameConfig;
+  }
+
+  /**
+   * Empty state config which prompts the user to save the virtualization.
+   * @returns {EmptyStateConfig} the empty state config
+   */
+  public get saveVirtualizationNameConfig(): EmptyStateConfig {
+    if ( !this.saveNameConfig ) {
+      this.saveNameConfig = {
+        iconStyleClass: "pficon-warning-triangle-o",
+        info: "Click save icon to save the virtualization name",
+        title: "Save Virtualization Name"
+      } as EmptyStateConfig;
+    }
+
+    return this.saveNameConfig;
   }
 
   /**
