@@ -18,12 +18,11 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { ColumnData } from "@dataservices/shared/column-data.model";
 import { RowData } from "@dataservices/shared/row-data.model";
+import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
 
 @Component({
@@ -35,13 +34,13 @@ import { Subscription } from "rxjs/Subscription";
 export class ViewPreviewComponent implements OnInit, OnDestroy {
 
   public columns: any[] = [];
+  private emptyStateConfig: EmptyStateConfig;
   public ngxConfig: NgxDataTableConfig;
   public tableConfig: TableConfig;
   public rows: any[] = [];
 
-  private emptyStateConfig: EmptyStateConfig;
-  private logger: LoggerService;
-  private editorService: ViewEditorService;
+  private readonly editorService: ViewEditorService;
+  private readonly logger: LoggerService;
   private subscription: Subscription;
 
   /**
@@ -52,7 +51,6 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
                logger: LoggerService ) {
     this.logger = logger;
     this.editorService = editorService;
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
   }
 
   private clearResults(): void {
@@ -94,6 +92,8 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
+
     this.ngxConfig = {
       headerHeight: 40,
       rowHeight: 20,

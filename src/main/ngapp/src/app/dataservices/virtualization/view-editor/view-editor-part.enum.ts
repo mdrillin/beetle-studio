@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export enum ViewEditorEventSource {
+export enum ViewEditorPart {
 
   /**
    * The source of the event is the canvas part.

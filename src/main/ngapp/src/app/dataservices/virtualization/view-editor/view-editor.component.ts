@@ -22,15 +22,15 @@ import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng"
 import { SelectionService } from "@core/selection.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { QueryResults } from "@dataservices/shared/query-results.model";
-import { ViewEditorEventSource } from "@dataservices/virtualization/view-editor/event/view-editor-event-source.enum";
-import { Subscription } from "rxjs/Subscription";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
+import { Subscription } from "rxjs/Subscription";
+import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { BsModalService } from "ngx-bootstrap";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
-import {ConnectionTableDialogComponent} from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
-import {SchemaNode} from "@connections/shared/schema-node.model";
+import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -48,9 +48,10 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   public toolbarConfig: ToolbarConfig;
 
   private actionConfig: ActionConfig;
-  private editorService: ViewEditorService;
+  private readonly editorService: ViewEditorService;
   private isNewView = false;
-  private logger: LoggerService;
+  private readonly logger: LoggerService;
+  private readonly selectionService: SelectionService;
   private modalService: BsModalService;
   private subscription: Subscription;
 
@@ -78,29 +79,12 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
                logger: LoggerService,
                editorService: ViewEditorService,
                modalService: BsModalService ) {
+    this.selectionService = selectionService;
     this.logger = logger;
     this.modalService = modalService;
 
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
-
-    if ( selectionService.getSelectedVirtualization() ) {
-      this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
-    } else {
-      // must have a virtualization selected
-      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorEventSource.EDITOR );
-    }
-
-    if ( selectionService.getSelectedView() ) {
-      this.editorService.setEditorView( selectionService.getSelectedView(), ViewEditorEventSource.EDITOR );
-
-      if ( this.editorService.getViewName().length === 0 ) {
-        this.editorService.addMessage( Message.create( Problem.ERR0110 ), ViewEditorEventSource.EDITOR );
-      }
-    } else {
-      this.isNewView = true;
-    }
   }
 
   private canAddComposition(): boolean {
@@ -148,7 +132,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      this.editorService.setViewSources( selectedNodes, ViewEditorEventSource.EDITOR );
+      this.editorService.setViewSources( selectedNodes, ViewEditorPart.EDITOR );
     });
   }
 
@@ -174,29 +158,9 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   private doDisplayLogMessages( actionId: string ): void {
-    // TODO remove this code and alert when properly implemented
-    let messages = "";
-
-    for ( const msg of this.editorService.getMessages() ) {
-      messages += msg.toString() + "\n";
-    }
-
-    if ( messages.length === 0 ) {
-      messages = "< no messages to display >";
-    }
-
-    alert( messages );
-
-    switch ( actionId ) {
-      case this.errorsActionId:
-        break;
-      case this.infosActionId:
-        break;
-      case this.warningsActionId:
-        break;
-      default:
-        break;
-    }
+    this.editorService.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR,
+                                                     ViewEditorEventType.SHOW_EDITOR_PART,
+                                                     [ ViewEditorPart.MESSAGE_LOG ] ) );
   }
 
   private doRedo(): void {
@@ -379,23 +343,29 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
-    // TODO implement
     this.logger.debug( "ViewEditorComponent received event: " + event.toString() );
+
+    if ( event.typeIsShowEditorPart() ) {
+      if ( event.args.length !== 0 ) {
+        // make sure the bottom area is showing if part is an additional editor view
+        if ( ( event.args[ 0 ] === ViewEditorPart.PREVIEW || event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG )
+           && !this.isShowingAdditionalViews ) {
+          this.editorService.setEditorConfig( this.fullEditorCssType );
+        }
+      }
+    }
   }
 
   private hasErrors(): boolean {
-    // TODO implement hasErrors
-    return true;
+    return true; // TODO this.errorMsgCount !== 0; (not working)
   }
 
   private hasInfos(): boolean {
-    // TODO implement hasInfos
-    return true;
+    return true; // TODO this.infoMsgCount !== 0; (not working)
   }
 
   private hasWarnings(): boolean {
-    // TODO implement hasWarnings
-    return true;
+    return true; // TODO this.warningMsgCount !== 0; (not working)
   }
 
   /**
@@ -406,21 +376,21 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Indicates if the results area should be shown.
+   *
+   * @returns {boolean} `true` if area should be shown
+   */
+  public get isShowingAdditionalViews(): boolean {
+    return this.editorCssType === this.resultsOnlyCssType || this.editorCssType === this.fullEditorCssType;
+  }
+
+  /**
    * Indicates if the canvas and properties areas should be shown.
    *
    * @returns {boolean} `true` if areas should be shown
    */
   public get isShowingCanvas(): boolean {
     return this.editorCssType === this.canvasOnlyCssType || this.editorCssType === this.fullEditorCssType;
-  }
-
-  /**
-   * Indicates if the results area should be shown.
-   *
-   * @returns {boolean} `true` if area should be shown
-   */
-  public get isShowingResults(): boolean {
-    return this.editorCssType === this.resultsOnlyCssType || this.editorCssType === this.fullEditorCssType;
   }
 
   /**
@@ -435,6 +405,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
    */
   public ngOnInit(): void {
     this.editorService.setEditorConfig( this.fullEditorCssType ); // this could be set via preference or last used config
+    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
 
     this.toolbarConfig = {
       views: [
@@ -704,7 +675,24 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
       ]
     };
     const results = new QueryResults( employeeJson );
-    this.editorService.setPreviewResults( results, ViewEditorEventSource.EDITOR );
+    this.editorService.setPreviewResults( results, ViewEditorPart.EDITOR );
+
+    if ( this.selectionService.getSelectedVirtualization() ) {
+      this.editorService.setEditorVirtualization( this.selectionService.getSelectedVirtualization() );
+    } else {
+      // must have a virtualization selected
+      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
+    }
+
+    if ( this.selectionService.getSelectedView() ) {
+      this.editorService.setEditorView( this.selectionService.getSelectedView(), ViewEditorPart.EDITOR );
+
+      if ( this.editorService.getViewName().length === 0 ) {
+        this.editorService.addMessage( Message.create( Problem.ERR0110 ), ViewEditorPart.EDITOR );
+      }
+    } else {
+      this.isNewView = true;
+    }
   }
 
   /**

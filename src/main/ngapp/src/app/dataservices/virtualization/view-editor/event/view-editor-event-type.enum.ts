@@ -53,6 +53,11 @@ export enum ViewEditorEventType {
   READONLY_CHANGED = "READONLY_CHANGED",
 
   /**
+   * An event indicating an editor part should become visible.
+   */
+  SHOW_EDITOR_PART = "SHOW_EDITOR_PART",
+
+  /**
    * An event indicating the view has been set.
    */
   VIEW_CHANGED = "VIEW_CHANGED",
