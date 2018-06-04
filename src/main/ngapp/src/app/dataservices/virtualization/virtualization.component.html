@@ -55,6 +55,12 @@
       </div>
     </form>
 
+    <div class="row" *ngIf="!createInProgress && !isNew && views.length > 0">
+      <div class="col-sm-3">
+        <a i18n="@@virtualization.addView" class="btn btn-primary" (click)="onNew()">Add View</a>
+      </div>
+    </div>
+
     <!-- Blank State or Card View -->
     <div class="row object-collection-page">
 

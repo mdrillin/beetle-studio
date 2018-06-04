@@ -20,6 +20,8 @@ import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { Subscription } from "rxjs/Subscription";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { View } from "@dataservices/shared/view.model";
 
 @Component({
   selector: "app-view-canvas",
@@ -65,6 +67,38 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    */
   public get readOnly(): boolean {
     return this.editorService.isReadOnly();
+  }
+
+  /**
+   * Determine if the view has sources defined
+   * @returns {boolean} 'true' if sources defined for the view
+   */
+  public get hasViewSources(): boolean {
+    const view = this.editorService.getEditorView();
+    if (view !== null) {
+      return view.getSources().length > 0;
+    }
+    return false;
+  }
+
+  /**
+   * Get the sources for the view
+   * @returns {SchemaNode[]} the view sources
+   */
+  public get viewSources(): SchemaNode[] {
+    const view = this.editorService.getEditorView();
+    if (view !== null) {
+      return view.getSources();
+    }
+    return [];
+  }
+
+  /**
+   * Handle removal of View Source
+   * @param {SchemaNode} source the view source to be removed
+   */
+  public onViewSourceRemoved( source: SchemaNode ): void {
+    this.editorService.getEditorView().setSources([]);
   }
 
 }

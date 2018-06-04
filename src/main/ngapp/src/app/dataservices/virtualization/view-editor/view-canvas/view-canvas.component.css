@@ -23,3 +23,14 @@
 #view-editor-properties-container {
   grid-area: properties-editor;
 }
+
+.alert-padding {
+  padding-top: 80px;
+}
+
+.selected-table-container {
+  background-color: white;
+  max-height: 480px;
+  margin-top: 70px;
+  overflow-y: auto;
+}
