@@ -7,9 +7,11 @@
     <label class="col-sm-2 control-label view-editor-header-label"
            for="view-editor-header-virtualization-name">Virtualization:
     </label>
-    <label class="col-sm-7 control-label view-editor-header-label"
-           id="view-editor-header-virtualization-name">{{virtualizationName}}
-    </label>
+    <a class="col-sm-7 control-label view-editor-header-label"
+       id="view-editor-header-virtualization-name"
+       [routerLink]="[virtualizationLink]"
+       (click)="onClick(editEvent)">{{virtualizationName}}
+    </a>
   </div>
 
   <!-- ========= -->

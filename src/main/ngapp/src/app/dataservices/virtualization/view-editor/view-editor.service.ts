@@ -26,6 +26,7 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { SchemaNode } from "@connections/shared/schema-node.model";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 @Injectable()
 export class ViewEditorService {
@@ -174,10 +175,19 @@ export class ViewEditorService {
    */
   public getViewName(): string {
     if ( this._editorView ) {
-      return this._editorView.getName();
+      if ( this._editorView.getName() ) {
+        return this._editorView.getName();
+      }
     }
 
     return "";
+  }
+
+  /**
+   * @returns {string} the router link of the virtualization
+   */
+  public getVirtualizationLink(): string {
+    return DataservicesConstants.virtualizationPath;
   }
 
   /**

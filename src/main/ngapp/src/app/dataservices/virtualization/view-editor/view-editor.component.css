@@ -106,10 +106,15 @@
   margin: 2px;
 }
 
+.view-editor-toolbar-end-group {
+  margin-right: 1em;
+}
+
 /*
  * Make the toolbar buttons smaller.
  */
 .view-editor-toolbar-icon {
+  color: var(--card-action-icon-color);
   font-size: xx-small;
 }
 

@@ -31,6 +31,7 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { BsModalService } from "ngx-bootstrap";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
+import { View } from "@dataservices/shared/view.model";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -41,19 +42,16 @@ import { ConnectionTableDialogComponent } from "@dataservices/virtualization/vie
 })
 export class ViewEditorComponent implements OnInit, OnDestroy {
 
-  public readonly virtualizationsLink = DataservicesConstants.dataservicesRootPath;
-  public readonly virtualizationLink = DataservicesConstants.virtualizationPath;
-
-  public showDescription = false;
-  public toolbarConfig: ToolbarConfig;
-
   private actionConfig: ActionConfig;
   private readonly editorService: ViewEditorService;
+  private fatalErrorOccurred = false;
   private isNewView = false;
   private readonly logger: LoggerService;
   private readonly selectionService: SelectionService;
   private modalService: BsModalService;
   private subscription: Subscription;
+  public toolbarConfig: ToolbarConfig;
+  public readonly virtualizationsLink = DataservicesConstants.dataservicesRootPath;
 
   //
   // Editor CSS types.
@@ -89,31 +87,31 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
 
   private canAddComposition(): boolean {
     // TODO implement canAddComposition
-    return this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.isShowingCanvas;
   }
 
   private canAddSource(): boolean {
     // TODO implement canAddSource
-    return this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.isShowingCanvas;
   }
 
   private canDelete(): boolean {
     // TODO implement canDelete
-    return this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.isShowingCanvas;
   }
 
   private canRedo(): boolean {
     // TODO implement canRedo
-    return this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.isShowingCanvas;
   }
 
   private canSave(): boolean {
-    return this.isShowingCanvas && this.editorService.hasChanges();
+    return !this.fatalErrorOccurred && this.editorService.hasChanges();
   }
 
   private canUndo(): boolean {
     // TODO implement canUndo
-    return this.isShowingCanvas;
+    return !this.fatalErrorOccurred && this.isShowingCanvas;
   }
 
   private doAddComposition(): void {
@@ -244,6 +242,14 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
             tooltip: "Add Composition"
           },
           {
+            disabled: !this.canSave(),
+            id: this.saveActionId,
+            styleClass: "view-editor-toolbar-end-group",
+            template: saveTemplate,
+            title: "Save",
+            tooltip: "Save"
+          },
+          {
             disabled: !this.canUndo(),
             id: this.undoActionId,
             template: undoTemplate,
@@ -253,20 +259,15 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
           {
             disabled: !this.canRedo(),
             id: this.redoActionId,
+            styleClass: "view-editor-toolbar-end-group",
             template: redoTemplate,
             title: "Redo",
             tooltip: "Redo"
           },
           {
-            disabled: !this.canSave(),
-            id: this.saveActionId,
-            template: saveTemplate,
-            title: "Save",
-            tooltip: "Save"
-          },
-          {
             disabled: !this.canDelete(),
             id: this.deleteActionId,
+            styleClass: "view-editor-toolbar-end-group",
             template: deleteTemplate,
             title: "Delete",
             tooltip: "Delete the selection"
@@ -677,22 +678,33 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
     const results = new QueryResults( employeeJson );
     this.editorService.setPreviewResults( results, ViewEditorPart.EDITOR );
 
+    // must have a virtualization parent
     if ( this.selectionService.getSelectedVirtualization() ) {
       this.editorService.setEditorVirtualization( this.selectionService.getSelectedVirtualization() );
-    } else {
-      // must have a virtualization selected
-      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
-    }
 
-    if ( this.selectionService.getSelectedView() ) {
-      this.editorService.setEditorView( this.selectionService.getSelectedView(), ViewEditorPart.EDITOR );
+      // check to see if editing a current view or creating a new one
+      if ( this.selectionService.getSelectedView() ) {
+        this.editorService.setEditorView( this.selectionService.getSelectedView(), ViewEditorPart.EDITOR );
+      } else {
+        this.isNewView = true;
+        this.editorService.setEditorView( new View(), ViewEditorPart.EDITOR );
+      }
 
       if ( this.editorService.getViewName().length === 0 ) {
         this.editorService.addMessage( Message.create( Problem.ERR0110 ), ViewEditorPart.EDITOR );
       }
     } else {
-      this.isNewView = true;
+      // must have a virtualization selected
+      this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
+      this.fatalErrorOccurred = true;
     }
+  }
+
+  /**
+   * @returns {string} the router link of the virtualization
+   */
+  public get virtualizationLink(): string {
+    return this.editorService.getVirtualizationLink();
   }
 
   /**
