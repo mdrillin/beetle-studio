@@ -21,6 +21,7 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Subscription } from "rxjs/Subscription";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -118,6 +119,13 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    */
   public viewNameChanged( newName: string ): void {
     this.viewName = newName;
+  }
+
+  /**
+   * @returns {string} the router link of the virtualization
+   */
+  public get virtualizationLink(): string {
+    return this.editorService.getVirtualizationLink();
   }
 
   /**

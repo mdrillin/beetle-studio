@@ -75,7 +75,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    */
   public get hasViewSources(): boolean {
     const view = this.editorService.getEditorView();
-    if (view !== null) {
+    if (view) {
       return view.getSources().length > 0;
     }
     return false;
