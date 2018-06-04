@@ -41,6 +41,8 @@ export class ViewEditorService {
   private _editorConfig: string;
   private _editorView: View;
   private _editorVirtualization: Dataservice;
+  private _errorMsgCount = 0;
+  private _infoMsgCount = 0;
   private _initialDescription: string;
   private _initialName: string;
   private _logger: LoggerService;
@@ -49,6 +51,7 @@ export class ViewEditorService {
   private _readOnly = false;
   private _viewIsValid = false;
   private _viewNameIsEmpty = false;
+  private _warningMsgCount = 0;
 
   constructor( logger: LoggerService ) {
     this._logger = logger;
@@ -61,6 +64,17 @@ export class ViewEditorService {
   public addMessage( msg: Message,
                      source: ViewEditorPart ): void {
     this._messages.push( msg );
+
+    if ( msg.isError() ) {
+      this._errorMsgCount++;
+    } else if ( msg.isWarning() ) {
+      this._warningMsgCount++;
+    } else if ( msg.isInfo() ) {
+      this._infoMsgCount++;
+    } else {
+      this._logger.error( "unhandled message type of '" + msg.type + "'");
+    }
+
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_ADDED, [ msg ] ) );
   }
 
@@ -71,6 +85,10 @@ export class ViewEditorService {
    */
   public clearMessages( source: ViewEditorPart ): void {
     this._messages.length = 0;
+    this._errorMsgCount = 0;
+    this._warningMsgCount = 0;
+    this._infoMsgCount = 0;
+
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED ) );
   }
 
@@ -84,6 +102,17 @@ export class ViewEditorService {
 
     if ( index !== -1 ) {
       const deleted = this._messages.splice( index, 1 );
+
+      if ( deleted[ 0 ].isError() ) {
+        this._errorMsgCount++;
+      } else if ( deleted[ 0 ].isWarning() ) {
+        this._warningMsgCount++;
+      } else if ( deleted[ 0 ].isInfo() ) {
+        this._infoMsgCount++;
+      } else {
+        this._logger.error( "unhandled message type of '" + deleted[ 0 ].type + "'");
+      }
+
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGE_DELETED, [ deleted[ 0 ] ] ) );
     }
   }
@@ -121,7 +150,7 @@ export class ViewEditorService {
    * @returns {number} the number of error messages
    */
   public getErrorMessageCount(): number {
-    return this.getErrorMessages().length;
+    return this._errorMsgCount;
   }
 
   /**
@@ -135,7 +164,7 @@ export class ViewEditorService {
    * @returns {number} the number of informational messages
    */
   public getInfoMessageCount(): number {
-    return this.getInfoMessages().length;
+    return this._infoMsgCount;
   }
 
   /**
@@ -194,7 +223,7 @@ export class ViewEditorService {
    * @returns {number} the number of warning messages
    */
   public getWarningMessageCount(): number {
-    return this.getWarningMessages().length;
+    return this._warningMsgCount;
   }
 
   /**
