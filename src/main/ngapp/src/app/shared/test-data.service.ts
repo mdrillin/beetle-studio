@@ -26,6 +26,7 @@ import { PublishState } from "@dataservices/shared/publish-state.enum";
 import { QueryResults } from "@dataservices/shared/query-results.model";
 import { VdbStatus } from "@dataservices/shared/vdb-status.model";
 import { Vdb } from "@dataservices/shared/vdb.model";
+import { View } from "@dataservices/shared/view.model";
 import { Virtualization } from "@dataservices/shared/virtualization.model";
 
 @Injectable()
@@ -973,12 +974,6 @@ export class TestDataService {
     TestDataService.conn2,
     TestDataService.conn3];
 
-  private dataServices: Dataservice[] = [
-    TestDataService.accountsService,
-    TestDataService.employeesService,
-    TestDataService.productsService
-  ];
-
   private vdbs: Vdb[] = [
     TestDataService.accountsVdb,
     TestDataService.employeesVdb,
@@ -987,6 +982,7 @@ export class TestDataService {
 
   private readonly vdbStatuses: VdbStatus[];
   private readonly virtualizations: Virtualization[];
+  private readonly dataServices: Dataservice[];
 
   /**
    * Create a ServiceCatalogSource using the specified info
@@ -1025,6 +1021,41 @@ export class TestDataService {
       TestDataService.employeesVirtualization,
       TestDataService.productsVirtualization
     ];
+    this.dataServices = [];
+    const svc1: Dataservice = TestDataService.accountsService;
+    const svc2: Dataservice = TestDataService.employeesService;
+    // Add views
+    const svc2View1: View = new View();
+    svc2View1.setName("employeesView1");
+    svc2View1.setDescription("employees view 1 description");
+    const svc2View2: View = new View();
+    svc2View2.setName("employeesView2");
+    svc2View2.setDescription("employees view 2 description");
+    const svc2Views: View[] = [];
+    svc2Views.push(svc2View1);
+    svc2Views.push(svc2View2);
+    svc2.setViews(svc2Views);
+
+    const svc3: Dataservice = TestDataService.productsService;
+    // Add views
+    const svc3View1: View = new View();
+    svc3View1.setName("productsView1");
+    svc3View1.setDescription("products view 1 description");
+    const svc3View2: View = new View();
+    svc3View2.setName("productsView2");
+    svc3View2.setDescription("products view 2 description");
+    const svc3View3: View = new View();
+    svc3View3.setName("productsView3");
+    svc3View3.setDescription("products view 3 description");
+    const svc3Views: View[] = [];
+    svc3Views.push(svc3View1);
+    svc3Views.push(svc3View2);
+    svc3Views.push(svc3View3);
+    svc3.setViews(svc3Views);
+
+    this.dataServices.push(svc1);
+    this.dataServices.push(svc2);
+    this.dataServices.push(svc3);
   }
 
   /**

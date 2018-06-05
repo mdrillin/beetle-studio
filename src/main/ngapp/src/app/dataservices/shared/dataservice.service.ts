@@ -212,6 +212,38 @@ export class DataserviceService extends ApiService {
   }
 
   /**
+   * Get a valid name, first attempting to use the supplied name
+   * @param {string} name the service name
+   * @returns {string} the valid name
+   */
+  public getValidName( name: string ): string {
+    let isDone = false;
+    let suffix = 1;
+
+    // Invokes isValidName until a valid name is found
+    while ( !isDone ) {
+      this.isValidName(name)
+        .subscribe(
+          (data) => {
+            if (data && data.length > 0) {
+              name = name + suffix;
+              suffix++;
+            } else {
+              isDone = true;
+            }
+          },
+          (error) => {
+            // Empty
+          },
+          () => {
+            // Empty
+          });
+    }
+
+    return name;
+  }
+
+  /**
    * Deploy a dataservice via the komodo rest interface
    * @param {string} dataserviceName
    * @returns {Observable<boolean>}
