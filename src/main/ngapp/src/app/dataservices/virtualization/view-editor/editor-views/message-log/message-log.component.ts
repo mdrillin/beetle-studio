@@ -21,7 +21,6 @@ import { ViewEditorService } from "@dataservices/virtualization/view-editor/view
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
-import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 
 @Component({
   encapsulation: ViewEncapsulation.None,

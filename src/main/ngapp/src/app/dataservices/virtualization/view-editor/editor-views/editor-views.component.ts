@@ -39,15 +39,13 @@ export class EditorViewsComponent implements OnInit, OnDestroy {
 
   /**
    * The tabs component configuration.
-   *
-   * @type {{heading: string; active: boolean}[]}
    */
   public tabs = [
     {
-      "active": true
+      "active": true // preview
     },
     {
-      "active": false
+      "active": false // message log
     },
   ];
 

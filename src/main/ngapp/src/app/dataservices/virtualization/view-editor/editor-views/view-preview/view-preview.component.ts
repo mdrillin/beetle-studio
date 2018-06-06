@@ -102,7 +102,7 @@ export class ViewPreviewComponent implements OnInit, OnDestroy {
     } as NgxDataTableConfig;
 
     this.emptyStateConfig = {
-      title: "Unable to preview data"
+      title: "Preview data unavailable"
     } as EmptyStateConfig;
 
     this.tableConfig = {

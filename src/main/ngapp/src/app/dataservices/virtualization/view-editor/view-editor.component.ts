@@ -17,26 +17,23 @@
 
 import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
-import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { SelectionService } from "@core/selection.service";
+import { Connection } from "@connections/shared/connection.model";
+import { ConnectionService } from "@connections/shared/connection.service";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { QueryResults } from "@dataservices/shared/query-results.model";
+import { View } from "@dataservices/shared/view.model";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
-import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
-import { BsModalService } from "ngx-bootstrap";
-import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
-import { View } from "@dataservices/shared/view.model";
-import { SchemaNode } from "@connections/shared/schema-node.model";
-import { LoadingState } from "@shared/loading-state.enum";
-import { ConnectionsConstants } from "@connections/shared/connections-constants";
-import { Connection } from "@connections/shared/connection.model";
-import { ConnectionService } from "@connections/shared/connection.service";
+import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
+import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
+import { BsModalService } from "ngx-bootstrap";
+import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
+import { Subscription } from "rxjs/Subscription";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -54,7 +51,6 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private fatalErrorOccurred = false;
   private isNewView = false;
   private readonly logger: LoggerService;
-  private readonly selectionService: SelectionService;
   private modalService: BsModalService;
   private subscription: Subscription;
 
@@ -87,41 +83,42 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
                editorService: ViewEditorService,
                modalService: BsModalService ) {
     this.connectionService = connectionService;
-    this.selectionService = selectionService;
     this.logger = logger;
     this.modalService = modalService;
 
     // this is the service that is injected into all the editor parts
     this.editorService = editorService;
+    this.editorService.setEditorVirtualization( selectionService.getSelectedVirtualization() );
+    this.editorService.setEditorView( selectionService.getSelectedView(), ViewEditorPart.EDITOR );
   }
 
   private canAddComposition(): boolean {
     // TODO implement canAddComposition
-    return !this.fatalErrorOccurred && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
   private canAddSource(): boolean {
     // TODO implement canAddSource
-    return !this.fatalErrorOccurred && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
   private canDelete(): boolean {
     // TODO implement canDelete
-    return !this.fatalErrorOccurred && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
   private canRedo(): boolean {
     // TODO implement canRedo
-    return !this.fatalErrorOccurred && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
   private canSave(): boolean {
-    return !this.fatalErrorOccurred && this.editorService.hasChanges();
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.editorService.hasChanges();
   }
 
   private canUndo(): boolean {
     // TODO implement canUndo
-    return !this.fatalErrorOccurred && this.isShowingCanvas;
+    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.isShowingCanvas;
   }
 
   private doAddComposition(): void {
@@ -140,25 +137,30 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
     // Show Dialog, act upon confirmation click
     const modalRef = this.modalService.show(ConnectionTableDialogComponent, {initialState});
     modalRef.content.okAction.take(1).subscribe((selectedNodes) => {
-      this.editorService.setViewSources( selectedNodes, ViewEditorPart.EDITOR );
+      this.editorService.getEditorView().setSources( selectedNodes );
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.EDITOR,
+                                                  ViewStateChangeId.SOURCES_CHANGED,
+                                                  [ selectedNodes ] );
     });
   }
 
   private doDelete(): void {
-    // Dialog Content
-    const message = "Do you really want to delete View '" + this.editorService.getViewName() + "'?";
-    const initialState = {
-      title: "Confirm Delete",
-      bodyContent: message,
-      cancelButtonText: "Cancel",
-      confirmButtonText: "Delete"
-    };
-
-    // Show Dialog, act upon confirmation click
-    const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
-    modalRef.content.confirmAction.take(1).subscribe((value) => {
-      this.deleteView();
-    });
+    // TODO implement doDelete
+    alert( "Display delete canvas object confirmation dialog" );
+    // // Dialog Content
+    // const message = "Do you really want to delete View '" + this.editorService.getEditorView().getName() + "'?";
+    // const initialState = {
+    //   title: "Confirm Delete",
+    //   bodyContent: message,
+    //   cancelButtonText: "Cancel",
+    //   confirmButtonText: "Delete"
+    // };
+    //
+    // // Show Dialog, act upon confirmation click
+    // const modalRef = this.modalService.show(ConfirmDialogComponent, {initialState});
+    // modalRef.content.confirmAction.take(1).subscribe((value) => {
+    //   this.deleteView();
+    // });
   }
 
   private deleteView( ): void {
@@ -363,6 +365,8 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
           this.editorService.setEditorConfig( this.fullEditorCssType );
         }
       }
+    } else if ( event.typeIsViewStateChanged() ) {
+      this.validateView( "ViewEditorEvent.VIEW_STATE_CHANGED" );
     }
   }
 
@@ -437,271 +441,16 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
       ]
     } as ToolbarConfig;
 
-    // TODO remove this when preview results are being set programmatically
-    const employeeJson = {
-      "columns": [
-        {
-          "name": "ssn",
-          "label": "ssn",
-          "type": "string"
-        },
-        {
-          "name": "firstname",
-          "label": "firstname",
-          "type": "string"
-        },
-        {
-          "name": "lastname",
-          "label": "lastname",
-          "type": "string"
-        },
-        {
-          "name": "st_address",
-          "label": "st_address",
-          "type": "string"
-        },
-        {
-          "name": "apt_number",
-          "label": "apt_number",
-          "type": "string"
-        },
-        {
-          "name": "city",
-          "label": "city",
-          "type": "string"
-        },
-        {
-          "name": "state",
-          "label": "state",
-          "type": "string"
-        },
-        {
-          "name": "zipcode",
-          "label": "zipcode",
-          "type": "string"
-        },
-        {
-          "name": "phone",
-          "label": "phone",
-          "type": "string"
-        }
-      ],
-      "rows": [
-        {
-          "row": [
-            "CST01002  ",
-            "Joseph",
-            "Smith",
-            "1234 Main Street",
-            "Apartment 56",
-            "New York",
-            "New York",
-            "10174",
-            "(646)555-1776"
-          ]
-        },
-        {
-          "row": [
-            "CST01003  ",
-            "Nicholas",
-            "Ferguson",
-            "202 Palomino Drive",
-            "",
-            "Pittsburgh",
-            "Pennsylvania",
-            "15071",
-            "(412)555-4327"
-          ]
-        },
-        {
-          "row": [
-            "CST01004  ",
-            "Jane",
-            "Aire",
-            "15 State Street",
-            "",
-            "Philadelphia",
-            "Pennsylvania",
-            "19154",
-            "(814)555-6789"
-          ]
-        },
-        {
-          "row": [
-            "CST01005  ",
-            "Charles",
-            "Jones",
-            "1819 Maple Street",
-            "Apartment 17F",
-            "Stratford",
-            "Connecticut",
-            "06614",
-            "(203)555-3947"
-          ]
-        },
-        {
-          "row": [
-            "CST01006  ",
-            "Virginia",
-            "Jefferson",
-            "1710 South 51st Street",
-            "Apartment 3245",
-            "New York",
-            "New York",
-            "10175",
-            "(718)555-2693"
-          ]
-        },
-        {
-          "row": [
-            "CST01007  ",
-            "Ralph",
-            "Bacon",
-            "57 Barn Swallow Avenue",
-            "",
-            "Charlotte",
-            "North Carolina",
-            "28205",
-            "(704)555-4576"
-          ]
-        },
-        {
-          "row": [
-            "CST01008  ",
-            "Bonnie",
-            "Dragon",
-            "88 Cinderella Lane",
-            "",
-            "Jacksonville",
-            "Florida",
-            "32225",
-            "(904)555-6514"
-          ]
-        },
-        {
-          "row": [
-            "CST01009  ",
-            "Herbert",
-            "Smith",
-            "12225 Waterfall Way",
-            "Building 100, Suite 9",
-            "Portland",
-            "Oregon",
-            "97220",
-            "(971)555-7803"
-          ]
-        },
-        {
-          "row": [
-            "CST01015  ",
-            "Jack",
-            "Corby",
-            "1 Lone Star Way",
-            "",
-            "Dallas",
-            "Texas",
-            "75231",
-            "(469)555-8023"
-          ]
-        },
-        {
-          "row": [
-            "CST01019  ",
-            "Robin",
-            "Evers",
-            "1814 Falcon Avenue",
-            "",
-            "Atlanta",
-            "Georgia",
-            "30355",
-            "(470)555-4390"
-          ]
-        },
-        {
-          "row": [
-            "CST01020  ",
-            "Lloyd",
-            "Abercrombie",
-            "1954 Hughes Parkway",
-            "",
-            "Los Angeles",
-            "California",
-            "90099",
-            "(213)555-2312"
-          ]
-        },
-        {
-          "row": [
-            "CST01021  ",
-            "Scott",
-            "Watters",
-            "24 Mariner Way",
-            "",
-            "Seattle",
-            "Washington",
-            "98124",
-            "(206)555-6790"
-          ]
-        },
-        {
-          "row": [
-            "CST01022  ",
-            "Sandra",
-            "King",
-            "96 Lakefront Parkway",
-            "",
-            "Minneapolis",
-            "Minnesota",
-            "55426",
-            "(651)555-9017"
-          ]
-        },
-        {
-          "row": [
-            "CST01027  ",
-            "Maryanne",
-            "Peters",
-            "35 Grand View Circle",
-            "Apartment 5F",
-            "Cincinnati",
-            "Ohio",
-            "45232",
-            "(513)555-9067"
-          ]
-        },
-        {
-          "row": [
-            "CST01034  ",
-            "Corey",
-            "Snyder",
-            "1760 Boston Commons Avenue",
-            "Suite 543",
-            "Boston",
-            "Massachusetts",
-            "02136 ",
-            "(617)555-3546"
-          ]
-        }
-      ]
-    };
-    const results = new QueryResults( employeeJson );
-    this.editorService.setPreviewResults( results, ViewEditorPart.EDITOR );
-
     // must have a virtualization parent
-    if ( this.selectionService.getSelectedVirtualization() ) {
-      this.editorService.setEditorVirtualization( this.selectionService.getSelectedVirtualization() );
-
-      // check to see if editing a current view or creating a new one
-      if ( this.selectionService.getSelectedView() ) {
-        this.editorService.setEditorView( this.selectionService.getSelectedView(), ViewEditorPart.EDITOR );
-      } else {
+    if ( this.editorService.getEditorVirtualization() ) {
+      // check to see if creating a new view
+      if ( !this.editorService.getEditorView() ) {
         this.isNewView = true;
         this.editorService.setEditorView( new View(), ViewEditorPart.EDITOR );
       }
 
-      if ( this.editorService.getViewName().length === 0 ) {
-        this.editorService.addMessage( Message.create( Problem.ERR0110 ), ViewEditorPart.EDITOR );
-      }
+      // validate view
+      this.validateView( "ngOnInit" );
     } else {
       // must have a virtualization selected
       this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
@@ -730,6 +479,21 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
         }
       );
 
+  }
+
+  private validateView( context?: string ): void {
+    this.editorService.clearMessages( ViewEditorPart.EDITOR, context );
+
+    const messages = ViewValidator.validate( this.editorService.getEditorView() );
+
+    if ( messages.length !== 0 ) {
+      for ( const msg of messages ) {
+        this.editorService.addMessage( msg, ViewEditorPart.EDITOR );
+      }
+    }
+
+
+    console.error( "*** Number of messages: " + messages.length );
   }
 
   /**

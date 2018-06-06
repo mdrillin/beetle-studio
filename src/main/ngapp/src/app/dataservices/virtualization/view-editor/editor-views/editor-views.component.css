@@ -1,8 +1,9 @@
 /*
  * The editor views tabset.
  */
-#editor-views-tabs {
-  /* add custom settings for tabset */
+#editor-views-tabs .tab-content {
+  border: 1px solid lightgray;
+  height: 75%;
 }
 
 /*

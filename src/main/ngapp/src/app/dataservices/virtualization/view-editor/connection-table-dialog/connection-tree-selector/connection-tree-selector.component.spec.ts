@@ -10,7 +10,6 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
-import { TestDataService } from "@shared/test-data.service";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 
 describe("ConnectionTreeSelectorComponent", () => {

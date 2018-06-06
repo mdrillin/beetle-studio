@@ -127,6 +127,13 @@ export class ViewEditorEvent {
   }
 
   /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITED_VIEW_SET`
+   */
+  public typeIsEditedViewSet(): boolean {
+    return this.type === ViewEditorEventType.EDITED_VIEW_SET;
+  }
+
+  /**
    * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITOR_CONFIG_CHANGED`
    */
   public typeIsEditorConfigChanged(): boolean {
@@ -176,24 +183,10 @@ export class ViewEditorEvent {
   }
 
   /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_CHANGED`
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_STATE_CHANGED`
    */
-  public typeIsViewChanged(): boolean {
-    return this.type === ViewEditorEventType.VIEW_CHANGED;
-  }
-
-  /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_DESCRIPTION_CHANGED`
-   */
-  public typeIsViewDescriptionChanged(): boolean {
-    return this.type === ViewEditorEventType.VIEW_DESCRIPTION_CHANGED;
-  }
-
-  /**
-   * @returns {boolean} `true` if the type is `ViewEditorEventType.VIEW_NAME_CHANGED`
-   */
-  public typeIsViewNameChanged(): boolean {
-    return this.type === ViewEditorEventType.VIEW_NAME_CHANGED;
+  public typeIsViewStateChanged(): boolean {
+    return this.type === ViewEditorEventType.VIEW_STATE_CHANGED;
   }
 
   /**

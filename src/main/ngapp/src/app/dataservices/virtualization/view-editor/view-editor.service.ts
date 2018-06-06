@@ -16,19 +16,19 @@
  */
 
 import { EventEmitter, Injectable, Output } from "@angular/core";
+import { Connection } from "@connections/shared/connection.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 import { LoggerService } from "@core/logger.service";
+import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
 import { Dataservice } from "@dataservices/shared/dataservice.model";
 import { QueryResults } from "@dataservices/shared/query-results.model";
+import { VdbService } from "@dataservices/shared/vdb.service";
 import { View } from "@dataservices/shared/view.model";
-import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
-import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
-import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
-import { SchemaNode } from "@connections/shared/schema-node.model";
-import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
-import { VdbService } from "@dataservices/shared/vdb.service";
-import { Connection } from "@connections/shared/connection.model";
+import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
+import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
+import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 
 @Injectable()
 export class ViewEditorService {
@@ -45,15 +45,12 @@ export class ViewEditorService {
   private _editorVirtualization: Dataservice;
   private _errorMsgCount = 0;
   private _infoMsgCount = 0;
-  private _initialDescription: string;
-  private _initialName: string;
   private _logger: LoggerService;
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
   private _vdbService: VdbService;
   private _viewIsValid = false;
-  private _viewNameIsEmpty = false;
   private _warningMsgCount = 0;
 
   constructor( logger: LoggerService, vdbService: VdbService ) {
@@ -86,14 +83,20 @@ export class ViewEditorService {
    * Clears all log messages.
    *
    * @param {ViewEditorPart} source the source that is deleting the message
+   * @param {string} context an optional context
    */
-  public clearMessages( source: ViewEditorPart ): void {
+  public clearMessages( source: ViewEditorPart,
+                        context?: string ): void {
     this._messages.length = 0;
     this._errorMsgCount = 0;
     this._warningMsgCount = 0;
     this._infoMsgCount = 0;
 
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED ) );
+    if ( context ) {
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED, [ context ] ) );
+    } else {
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.LOG_MESSAGES_CLEARED ) );
+    }
   }
 
   /**
@@ -127,6 +130,27 @@ export class ViewEditorService {
   public fire( event: ViewEditorEvent ): void {
     this._logger.debug( "firing event: " + event );
     this.editorEvent.emit( event );
+  }
+
+  /**
+   * Fires a `ViewEditorEventType.VIEW_STATE_CHANGED`.
+   *
+   * @param {ViewEditorPart} source the source of the event
+   * @param {ViewStateChangeId} changeId the ID of the type of view state change that occurred
+   * @param {object[]} args the optional args
+   */
+  public fireViewStateHasChanged( source: ViewEditorPart,
+                                  changeId: ViewStateChangeId,
+                                  args?: any[] ): void {
+    const data = [ changeId ];
+
+    if ( args && args.length !== 0 ) {
+      for ( const arg of args ) {
+        data.push( arg );
+      }
+    }
+
+    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_STATE_CHANGED, data ) );
   }
 
   /**
@@ -193,30 +217,6 @@ export class ViewEditorService {
   }
 
   /**
-   * @returns {string} the view description (never `null` but can be empty)
-   */
-  public getViewDescription(): string {
-    if ( this._editorView && this._editorView.getDescription() ) {
-      return this._editorView.getDescription();
-    }
-
-    return "";
-  }
-
-  /**
-   * @returns {string} the view name (never `null` but can be empty)
-   */
-  public getViewName(): string {
-    if ( this._editorView ) {
-      if ( this._editorView.getName() ) {
-        return this._editorView.getName();
-      }
-    }
-
-    return "";
-  }
-
-  /**
    * @returns {string} the router link of the virtualization
    */
   public getVirtualizationLink(): string {
@@ -241,8 +241,7 @@ export class ViewEditorService {
    * @returns {boolean} `true` if the editor has unsaved changes
    */
   public hasChanges(): boolean {
-    // TODO this is not working since save button does not enable after making changes
-    // return this._initialName !== this.getViewName() || this._initialDescription !== this.getViewDescription();
+    // TODO implement hasChanges
     return true;
   }
 
@@ -277,10 +276,7 @@ export class ViewEditorService {
                         source: ViewEditorPart ): void {
     if ( !this._editorView ) {
       this._editorView = view;
-      this._initialDescription = this._editorView.getDescription();
-      this._initialName = this._editorView.getName();
-      this._viewNameIsEmpty = this._initialName ? this._initialName.length === 0 : true;
-      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_CHANGED, [ this._editorView ] ) );
+      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
     } else {
       this._logger.debug( "setEditorView called more than once" );
     }
@@ -326,72 +322,6 @@ export class ViewEditorService {
       this._readOnly = newReadOnly;
       this.fire( ViewEditorEvent.create( source, ViewEditorEventType.READONLY_CHANGED, [ newReadOnly ] ) );
     }
-  }
-
-  /**
-   * Sets the view description to the new value. Fires a `ViewEditorEventType.VIEW_DESCRIPTION_CHANGED` event
-   * having the new description as an argument.
-   *
-   * @param {string} newDescription the new view description
-   * @param {ViewEditorPart} source the source making the update
-   */
-  public setViewDescription( newDescription: string,
-                             source: ViewEditorPart ): void {
-    this._editorView.setDescription( newDescription );
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_DESCRIPTION_CHANGED, [ newDescription ] ) );
-  }
-
-  /**
-   * Sets the view sources to the new value. Fires a `ViewEditorEventType.VIEW_SOURCES_CHANGED` event
-   * having the new sources as an argument.
-   *
-   * @param {SchemaNode[]} newSources the array of new view sources
-   * @param {ViewEditorEventSource} source the source making the update
-   */
-  public setViewSources( newSources: SchemaNode[],
-                         source: ViewEditorPart ): void {
-    this._editorView.setSources( newSources );
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_SOURCES_CHANGED, [ newSources ] ) );
-  }
-
-  /**
-   * Sets the view validation status to the new value. Fires a `ViewEditorEventType.VIEW_VALIDATION_CHANGED` event
-   * having the new value as an argument.
-   *
-   * @param {string} newValidState the new view validation state
-   * @param {ViewEditorPart} source the source making the update
-   */
-  public setViewIsValid( newValidState: boolean,
-                         source: ViewEditorPart ): void {
-    if ( this._viewIsValid !== newValidState ) {
-      this._viewIsValid = newValidState;
-      this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_DESCRIPTION_CHANGED, [ this._viewIsValid ] ) );
-    }
-  }
-
-  /**
-   * Sets the view name to the new value. Fires a `ViewEditorEventType.VIEW_NAME_CHANGED` event having the new name
-   * as an argument.
-   *
-   * @param {string} newName the new view name
-   * @param {ViewEditorPart} source the source making the update
-   */
-  public setViewName( newName: string,
-                      source: ViewEditorPart ): void {
-    this._editorView.setName( newName );
-
-    const oldIsEmpty = this._viewNameIsEmpty;
-    this._viewNameIsEmpty = newName ? newName.length === 0 : true;
-
-    if ( oldIsEmpty !== this._viewNameIsEmpty ) {
-      if ( oldIsEmpty ) {
-        this.deleteMessage( Problem.ERR0110.id, source );
-      } else {
-        this.addMessage( Message.create( Problem.ERR0110 ), source );
-      }
-    }
-
-    this.fire( ViewEditorEvent.create( source, ViewEditorEventType.VIEW_NAME_CHANGED, [ newName ] ) );
   }
 
   /**
