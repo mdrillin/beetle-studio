@@ -413,9 +413,17 @@ export class ViewEditorService {
     // TODO: The below assumes once source per view.  Needs to be expanded in future
     const viewNames: string[] = [];
     const sourceNodes: SchemaNode[] = [];
+
+    // Add the current editor view name and source Node
+    viewNames.push(this._editorView.getName());
+    sourceNodes.push(this._editorView.getSources()[0]);
+
+    // Add existing views and source nodes.  skip the view being edited
     for ( const view of this._editorVirtualization.getViews() ) {
-      viewNames.push(view.getName());
-      sourceNodes.push(view.getSources()[0]); // Currently limited to one source per view
+      if ( viewNames.indexOf(view.getName()) === -1 ) {
+        viewNames.push(view.getName());
+        sourceNodes.push(view.getSources()[0]); // Currently limited to one source per view
+      }
     }
 
     // Resets all of the views in the service VDB
