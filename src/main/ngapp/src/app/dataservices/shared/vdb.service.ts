@@ -242,7 +242,7 @@ export class VdbService extends ApiService {
     return this.http
       .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
                                               + VdbsConstants.vdbModelsRootPath + "/"
-                                              + modelName + "/views", this.getAuthRequestOptions())
+                                              + modelName + "/Views", this.getAuthRequestOptions())
       .map((response) => {
         const views = response.json();
         return views.map((view) => View.create( view ));
