@@ -27,6 +27,8 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
 import { Problem } from "@dataservices/virtualization/view-editor/editor-views/message-log/problem";
 import { SchemaNode } from "@connections/shared/schema-node.model";
 import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { VdbService } from "@dataservices/shared/vdb.service";
+import { Connection } from "@connections/shared/connection.model";
 
 @Injectable()
 export class ViewEditorService {
@@ -49,12 +51,14 @@ export class ViewEditorService {
   private _messages: Message[] = [];
   private _previewResults: QueryResults;
   private _readOnly = false;
+  private _vdbService: VdbService;
   private _viewIsValid = false;
   private _viewNameIsEmpty = false;
   private _warningMsgCount = 0;
 
-  constructor( logger: LoggerService ) {
+  constructor( logger: LoggerService, vdbService: VdbService ) {
     this._logger = logger;
+    this._vdbService = vdbService;
   }
 
   /**
@@ -238,7 +242,8 @@ export class ViewEditorService {
    */
   public hasChanges(): boolean {
     // TODO this is not working since save button does not enable after making changes
-    return this._initialName !== this.getViewName() || this._initialDescription !== this.getViewDescription();
+    // return this._initialName !== this.getViewName() || this._initialDescription !== this.getViewDescription();
+    return true;
   }
 
   /**
@@ -394,6 +399,39 @@ export class ViewEditorService {
    */
   public viewIsValid(): boolean {
     return this._viewIsValid;
+  }
+
+  /**
+   * Save the current View.
+   * Currently, this regenerates *all* of the views.
+   */
+  public saveView(connections: Connection[]): void {
+    const serviceVdbName = this._editorVirtualization.getServiceVdbName();
+    const serviceVdbModelName = this._editorVirtualization.getServiceViewModel();
+
+    // Accumulate the view information
+    // TODO: The below assumes once source per view.  Needs to be expanded in future
+    const viewNames: string[] = [];
+    const sourceNodes: SchemaNode[] = [];
+    for ( const view of this._editorVirtualization.getViews() ) {
+      viewNames.push(view.getName());
+      sourceNodes.push(view.getSources()[0]); // Currently limited to one source per view
+    }
+
+    // Resets all of the views in the service VDB
+    this._vdbService.setVdbModelViews(serviceVdbName,
+                                      serviceVdbModelName,
+                                      viewNames,
+                                      sourceNodes,
+                                      connections)
+      .subscribe(
+        (wasSuccess) => {
+          alert("View Save was successful!");
+        },
+        (error) => {
+          alert("View Save failed!");
+        }
+      );
   }
 
 }

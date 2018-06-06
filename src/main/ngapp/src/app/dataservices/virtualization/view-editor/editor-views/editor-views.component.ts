@@ -16,13 +16,11 @@
  */
 
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { TabDirective } from "ngx-bootstrap";
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
-import { Task } from "protractor/built/taskScheduler";
 
 @Component({
   encapsulation: ViewEncapsulation.None,

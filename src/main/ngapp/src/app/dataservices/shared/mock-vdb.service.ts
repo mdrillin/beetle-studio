@@ -32,8 +32,8 @@ import "rxjs/add/observable/throw";
 import "rxjs/add/operator/catch";
 import "rxjs/add/operator/map";
 import { Observable } from "rxjs/Observable";
-import { VdbsConstants } from "@dataservices/shared/vdbs-constants";
-import { environment } from "@environments/environment";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { Connection } from "@connections/shared/connection.model";
 
 @Injectable()
 export class MockVdbService extends VdbService {
@@ -98,6 +98,20 @@ export class MockVdbService extends VdbService {
    * @returns {Observable<boolean>}
    */
   public createVdbModelSource(vdbName: string, modelName: string, vdbModelSource: VdbModelSource): Observable<boolean> {
+    return Observable.of(true);
+  }
+
+  /**
+   * Creates the Vdb Model Views via the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string[]} viewNames the view names
+   * @param {SchemaNode[]} sourceNodes the source node for each view
+   * @param {Connection[]} connections the array of available active connections
+   * @returns {Observable<boolean>}
+   */
+  public setVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
+                          sourceNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
     return Observable.of(true);
   }
 

@@ -32,6 +32,11 @@ import { BsModalService } from "ngx-bootstrap";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
 import { View } from "@dataservices/shared/view.model";
+import { SchemaNode } from "@connections/shared/schema-node.model";
+import { LoadingState } from "@shared/loading-state.enum";
+import { ConnectionsConstants } from "@connections/shared/connections-constants";
+import { Connection } from "@connections/shared/connection.model";
+import { ConnectionService } from "@connections/shared/connection.service";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -43,6 +48,8 @@ import { View } from "@dataservices/shared/view.model";
 export class ViewEditorComponent implements OnInit, OnDestroy {
 
   private actionConfig: ActionConfig;
+  private connections: Connection[] = [];
+  private connectionService: ConnectionService;
   private readonly editorService: ViewEditorService;
   private fatalErrorOccurred = false;
   private isNewView = false;
@@ -50,6 +57,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private readonly selectionService: SelectionService;
   private modalService: BsModalService;
   private subscription: Subscription;
+
   public toolbarConfig: ToolbarConfig;
   public readonly virtualizationsLink = DataservicesConstants.dataservicesRootPath;
 
@@ -73,10 +81,12 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private readonly undoActionId = "undoActionId";
   private readonly warningsActionId = "warningsActionId";
 
-  constructor( selectionService: SelectionService,
+  constructor( connectionService: ConnectionService,
+               selectionService: SelectionService,
                logger: LoggerService,
                editorService: ViewEditorService,
                modalService: BsModalService ) {
+    this.connectionService = connectionService;
     this.selectionService = selectionService;
     this.logger = logger;
     this.modalService = modalService;
@@ -167,8 +177,7 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   private doSave(): void {
-    // TODO implement doSave
-    this.logger.debug( "doSave() here" );
+    this.editorService.saveView(this.connections);
   }
 
   private doUndo(): void {
@@ -698,6 +707,29 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
       this.editorService.addMessage( Message.create( Problem.ERR0100 ), ViewEditorPart.EDITOR );
       this.fatalErrorOccurred = true;
     }
+
+    // Load the connections
+    const self = this;
+    this.connectionService
+      .getConnections(true, true)
+      .subscribe(
+        (connectionSummaries) => {
+          const conns = [];
+          const treeNodes = [];
+          for ( const connectionSummary of connectionSummaries ) {
+            const connStatus = connectionSummary.getStatus();
+            const conn = connectionSummary.getConnection();
+            conn.setStatus(connStatus);
+            conns.push(conn);
+            self.connections = conns;
+          }
+        },
+        (error) => {
+          // self.logger.error("[ConnectionSchemaTreeComponent] Error getting connections: %o", error);
+          // self.connectionLoadingState = LoadingState.LOADED_INVALID;
+        }
+      );
+
   }
 
   /**

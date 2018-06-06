@@ -115,7 +115,7 @@
  */
 .view-editor-toolbar-icon {
   color: var(--card-action-icon-color);
-  font-size: xx-small;
+  font-size: larger;
 }
 
 /*

@@ -1,13 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { EditorViewsComponent } from './editor-views.component';
-import { ViewPreviewComponent } from "@dataservices/virtualization/view-editor/editor-views/view-preview/view-preview.component";
-import { TabDirective, TabsetComponent } from "ngx-bootstrap";
+import { LoggerService } from "@core/logger.service";
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { EditorViewsComponent } from '@dataservices/virtualization/view-editor/editor-views/editor-views.component';
 import { MessageLogComponent } from "@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component";
+import { ViewPreviewComponent } from "@dataservices/virtualization/view-editor/editor-views/view-preview/view-preview.component";
+import { TabsModule } from "ngx-bootstrap";
 import { PatternFlyNgModule } from "patternfly-ng";
-import {FormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
-import {CodemirrorModule} from "ng2-codemirror";
 
 describe('EditorViewsComponent', () => {
   let component: EditorViewsComponent;
@@ -15,9 +13,19 @@ describe('EditorViewsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ PatternFlyNgModule  ],
-      declarations: [ EditorViewsComponent, MessageLogComponent,
-                      ViewPreviewComponent, TabDirective, TabsetComponent ]
+      imports: [
+        PatternFlyNgModule,
+        TabsModule.forRoot()
+      ],
+      declarations: [
+        EditorViewsComponent,
+        MessageLogComponent,
+        ViewPreviewComponent
+      ],
+      providers: [
+        LoggerService,
+        ViewEditorService
+      ]
     })
     .compileComponents();
   }));

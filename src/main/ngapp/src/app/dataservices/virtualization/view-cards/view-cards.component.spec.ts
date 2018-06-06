@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ViewCardsComponent } from './view-cards.component';
+import { RouterTestingModule } from "@angular/router/testing";
+import { LoggerService } from "@core/logger.service";
+import { ViewCardsComponent } from "@dataservices/virtualization/view-cards/view-cards.component";
+import { ViewCardComponent } from "@dataservices/virtualization/view-cards/view-card/view-card.component";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe('ViewCardsComponent', () => {
   let component: ViewCardsComponent;
@@ -8,7 +11,17 @@ describe('ViewCardsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewCardsComponent ]
+      declarations: [
+        ViewCardsComponent,
+        ViewCardComponent
+      ],
+      imports: [
+        PatternFlyNgModule,
+        RouterTestingModule
+      ],
+      providers: [
+        LoggerService
+      ]
     })
     .compileComponents();
   }));
