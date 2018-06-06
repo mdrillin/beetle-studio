@@ -21,7 +21,6 @@ import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { Subscription } from "rxjs/Subscription";
 import { SchemaNode } from "@connections/shared/schema-node.model";
-import { View } from "@dataservices/shared/view.model";
 
 @Component({
   selector: "app-view-canvas",

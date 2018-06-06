@@ -10,6 +10,8 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { AppSettingsService } from "@core/app-settings.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
+import { TestDataService } from "@shared/test-data.service";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 
 describe("ConnectionTreeSelectorComponent", () => {
   let component: ConnectionTreeSelectorComponent;
@@ -31,7 +33,30 @@ describe("ConnectionTreeSelectorComponent", () => {
     fixture = TestBed.createComponent(ConnectionTreeSelectorComponent);
     component = fixture.componentInstance;
 
-    component.nodes = [];
+    const node = {
+      "connectionName": "pgConn",
+      "name": "restaurants",
+      "type": "collection",
+      "queryable": true,
+      "children": [
+        {
+          "connectionName": "pgConn",
+          "name": "grades",
+          "type": "embedded",
+          "queryable": true,
+          "children": []
+        },
+        {
+          "connectionName": "pgConn",
+          "name": "location",
+          "type": "embedded",
+          "queryable": true,
+          "children": []
+        }
+      ]
+    };
+
+    component.nodes = [ SchemaNode.create( node ) ];
     component.options = {};
     fixture.detectChanges();
   });

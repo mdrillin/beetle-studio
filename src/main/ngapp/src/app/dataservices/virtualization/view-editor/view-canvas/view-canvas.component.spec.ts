@@ -1,8 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ViewCanvasComponent } from './view-canvas.component';
-import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { LoggerService } from "@core/logger.service";
+import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
+import { ViewCanvasComponent } from '@dataservices/virtualization/view-editor/view-canvas/view-canvas.component';
+import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
+import { PatternFlyNgModule } from "patternfly-ng";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -10,7 +12,8 @@ describe('ViewCanvasComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewCanvasComponent ],
+      imports: [ PatternFlyNgModule ],
+      declarations: [ ViewCanvasComponent, SelectedNodeComponent ],
       providers: [
         LoggerService,
         ViewEditorService
