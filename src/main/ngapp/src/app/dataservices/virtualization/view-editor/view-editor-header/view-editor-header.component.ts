@@ -21,7 +21,7 @@ import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-ed
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { Subscription } from "rxjs/Subscription";
-import { DataservicesConstants } from "@dataservices/shared/dataservices-constants";
+import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -68,21 +68,33 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    * @returns {boolean} `true` if view being edited is readonly
    */
   public get readOnly(): boolean {
-    return this.editorService.isReadOnly();
+    return !this.editorService.getEditorView() || this.editorService.isReadOnly();
   }
 
   /**
    * @returns {string} the view description
    */
   public get viewDescription(): string {
-    return this.editorService.getViewDescription();
+    if ( this.editorService.getEditorView() ) {
+      return this.editorService.getEditorView().getDescription();
+    }
+
+    return "";
   }
 
   /**
    * @param {string} newDescription the new description
    */
   public set viewDescription( newDescription: string ) {
-    this.editorService.setViewDescription( newDescription, ViewEditorPart.HEADER );
+    if ( this.editorService.getEditorView() ) {
+      this.editorService.getEditorView().setDescription( newDescription );
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER,
+                                                  ViewStateChangeId.DESCRIPTION,
+                                                  [ newDescription ] );
+    } else {
+      // shouldn't get here as description text input should be disabled if no view being edited
+      this.logger.error( "Trying to set description but there is no view being edited" );
+    }
   }
 
   /**
@@ -99,7 +111,7 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    */
   public get viewName(): string {
     if ( this.editorService.getEditorView() ) {
-      return this.editorService.getViewName();
+      return this.editorService.getEditorView().getName();
     }
 
     return "";
@@ -109,7 +121,15 @@ export class ViewEditorHeaderComponent implements OnInit, OnDestroy {
    * @param {string} newName the new name of the view
    */
   public set viewName( newName: string ) {
-    this.editorService.setViewName( newName, ViewEditorPart.HEADER );
+    if ( this.editorService.getEditorView() ) {
+      this.editorService.getEditorView().setName( newName );
+      this.editorService.fireViewStateHasChanged( ViewEditorPart.HEADER,
+                                                  ViewStateChangeId.NAME,
+                                                  [ newName ] );
+    } else {
+      // shouldn't get here as description text input should be disabled if no view being edited
+      this.logger.error( "Trying to set name but there is no view being edited" );
+    }
   }
 
   /**

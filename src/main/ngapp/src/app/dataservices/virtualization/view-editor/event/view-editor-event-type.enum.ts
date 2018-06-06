@@ -23,6 +23,11 @@ export enum ViewEditorEventType {
   CANVAS_SELECTION_CHANGED = "CANVAS_SELECTION_CHANGED",
 
   /**
+   * An event indicating the view being edited has been set. This will only be fired one time.
+   */
+  EDITED_VIEW_SET = "EDITED_VIEW_SET",
+
+  /**
    * An event indicating the editor configuration has changed.
    */
   EDITOR_CONFIG_CHANGED = "EDITOR_CONFIG_CHANGED",
@@ -58,27 +63,13 @@ export enum ViewEditorEventType {
   SHOW_EDITOR_PART = "SHOW_EDITOR_PART",
 
   /**
-   * An event indicating the view has been set.
+   * An event indicating the view has changed.
+   * @type {string}
    */
-  VIEW_CHANGED = "VIEW_CHANGED",
+  VIEW_STATE_CHANGED = "VIEW_STATE_CHANGED",
 
   /**
-   * An event indicating the view description has changed.
-   */
-  VIEW_DESCRIPTION_CHANGED = "VIEW_DESCRIPTION_CHANGED",
-
-  /**
-   * An event indicating the view name has changed.
-   */
-  VIEW_NAME_CHANGED = "VIEW_NAME_CHANGED",
-
-  /**
-   * An event indicating the view sources have changed.
-   */
-  VIEW_SOURCES_CHANGED = "VIEW_SOURCES_CHANGED",
-
-  /**
-   * An event indication the view validation status has changed.
+   * An event indicating the view validation status has changed.
    * @type {string}
    */
   VIEW_VALID_CHANGED = "VIEW_VALID_CHANGED"

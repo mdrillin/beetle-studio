@@ -24,6 +24,9 @@ export class Problem {
   public static readonly ERR0110 = new Problem( "ERR0110",
                                                 MessageType.ERROR,
                                                 "A view must have a name." );
+  public static readonly ERR0120 = new Problem( "ERR0120",
+                                                 MessageType.ERROR,
+                                                 "A view must have at least one source." );
 
   private readonly _id: string;
   private readonly _description: string;

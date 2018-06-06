@@ -1024,34 +1024,7 @@ export class TestDataService {
     this.dataServices = [];
     const svc1: Dataservice = TestDataService.accountsService;
     const svc2: Dataservice = TestDataService.employeesService;
-    // Add views
-    const svc2View1: View = new View();
-    svc2View1.setName("employeesView1");
-    svc2View1.setDescription("employees view 1 description");
-    const svc2View2: View = new View();
-    svc2View2.setName("employeesView2");
-    svc2View2.setDescription("employees view 2 description");
-    const svc2Views: View[] = [];
-    svc2Views.push(svc2View1);
-    svc2Views.push(svc2View2);
-    svc2.setViews(svc2Views);
-
     const svc3: Dataservice = TestDataService.productsService;
-    // Add views
-    const svc3View1: View = new View();
-    svc3View1.setName("productsView1");
-    svc3View1.setDescription("products view 1 description");
-    const svc3View2: View = new View();
-    svc3View2.setName("productsView2");
-    svc3View2.setDescription("products view 2 description");
-    const svc3View3: View = new View();
-    svc3View3.setName("productsView3");
-    svc3View3.setDescription("products view 3 description");
-    const svc3Views: View[] = [];
-    svc3Views.push(svc3View1);
-    svc3Views.push(svc3View2);
-    svc3Views.push(svc3View3);
-    svc3.setViews(svc3Views);
 
     this.dataServices.push(svc1);
     this.dataServices.push(svc2);
@@ -1144,6 +1117,45 @@ export class TestDataService {
    */
   public getVirtualizations(): Virtualization[] {
     return this.virtualizations;
+  }
+
+  /**
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @returns {View[]} the views for the specified vdb and model
+   */
+  public getViews(vdbName: string, modelName: string): View[] {
+    if (vdbName.toLowerCase() === "employeesvdb") {
+      const svc2View1: View = new View();
+      svc2View1.setName("employeesView1");
+      svc2View1.setDescription("employees view 1 description");
+      const svc2View2: View = new View();
+      svc2View2.setName("employeesView2");
+      svc2View2.setDescription("employees view 2 description");
+
+      const svc2Views: View[] = [];
+      svc2Views.push(svc2View1);
+      svc2Views.push(svc2View2);
+      return svc2Views;
+    } else if (vdbName.toLowerCase() === "productsvdb") {
+      const svc3View1: View = new View();
+      svc3View1.setName("productsView1");
+      svc3View1.setDescription("products view 1 description");
+      const svc3View2: View = new View();
+      svc3View2.setName("productsView2");
+      svc3View2.setDescription("products view 2 description");
+      const svc3View3: View = new View();
+      svc3View3.setName("productsView3");
+      svc3View3.setDescription("products view 3 description");
+
+      const svc3Views: View[] = [];
+      svc3Views.push(svc3View1);
+      svc3Views.push(svc3View2);
+      svc3Views.push(svc3View3);
+      return svc3Views;
+    } else {
+      return [];
+    }
   }
 
 }

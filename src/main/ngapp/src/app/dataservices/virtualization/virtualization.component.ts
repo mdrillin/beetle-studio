@@ -12,6 +12,7 @@ import { BsModalService } from "ngx-bootstrap";
 import { ActionConfig, EmptyStateConfig } from "patternfly-ng";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
+import { LoadingState } from "@shared/loading-state.enum";
 
 @Component({
   selector: "app-virtualization",
@@ -26,7 +27,7 @@ export class VirtualizationComponent implements OnInit {
   public nameValidationError = "";
   public views: View[] = [];
   public selectedViews: View[] = [];
-  public createInProgress = false;
+  public viewCreateInProgress = false;
   public showDescription = false;
 
   private selectionService: SelectionService;
@@ -41,6 +42,7 @@ export class VirtualizationComponent implements OnInit {
   private currentVirtualization: Dataservice = null;
   private originalName: string;
   private newVirtualization: NewDataservice = null;
+  private viewsLoadingState: LoadingState = LoadingState.LOADING;
 
   constructor( selectionService: SelectionService, dataserviceService: DataserviceService,
                vdbService: VdbService, modalService: BsModalService, router: Router, logger: LoggerService ) {
@@ -60,14 +62,14 @@ export class VirtualizationComponent implements OnInit {
       this.originalName = this.currentVirtualization.getId();
       this.initForm(this.currentVirtualization.getId(), this.currentVirtualization.getDescription(), false);
       // Init views
-      this.views = this.currentVirtualization.getViews();
-      this.setViewsEditableState(true);
+      this.initViews();
     } else {
       this.originalName = "";
       this.newVirtualization = this.dataserviceService.newDataserviceInstance(this.originalName, "");
       this.initForm(this.newVirtualization.getId(), this.newVirtualization.getDescription(), true);
       // Init Views
       this.views = [];
+      this.viewsLoadingState = LoadingState.LOADED_VALID;
     }
   }
 
@@ -85,6 +87,27 @@ export class VirtualizationComponent implements OnInit {
    */
   public get allViews( ): View[] {
     return this.views;
+  }
+
+  /**
+   * Determine if the views are loading
+   */
+  public get viewsLoading( ): boolean {
+    return ( this.viewsLoadingState === LoadingState.LOADING );
+  }
+
+  /**
+   * Determine if view loading finished successfully
+   */
+  public get viewsLoadedSuccess( ): boolean {
+    return ( this.viewsLoadingState === LoadingState.LOADED_VALID );
+  }
+
+  /**
+   * Determine if view loading finished but with error
+   */
+  public get viewsLoadedFailed( ): boolean {
+    return ( this.viewsLoadingState === LoadingState.LOADED_INVALID );
   }
 
   /**
@@ -110,7 +133,7 @@ export class VirtualizationComponent implements OnInit {
     // If this is a brand new dataservice, create it
     if (this.isNew) {
       const self = this;
-      this.createInProgress = true;
+      this.viewCreateInProgress = true;
       this.newVirtualization.setId(theName);
       this.newVirtualization.setDescription(theDescription);
       this.dataserviceService
@@ -124,7 +147,7 @@ export class VirtualizationComponent implements OnInit {
           },
           (error) => {
             self.logger.error("[VirtualizationComponent] Error creating virtualization: %o", error);
-            self.createInProgress = false;
+            self.viewCreateInProgress = false;
           }
         );
       // Existing dataservice - update it
@@ -364,11 +387,37 @@ export class VirtualizationComponent implements OnInit {
               self.initForm(this.currentVirtualization.getId(), this.currentVirtualization.getDescription(), false);
             }
           }
-          self.createInProgress = false;
+          self.viewCreateInProgress = false;
         },
         (error) => {
           self.logger.error("[VirtualizationComponent] Error selecting the virtualization: %o", error);
-          self.createInProgress = false;
+          self.viewCreateInProgress = false;
+        }
+      );
+  }
+
+  /*
+   * Initialize the views for the current dataservice.  Makes a rest call to get the views for the service vdb,
+   * and sets them on the dataservice
+   */
+  private initViews( ): void {
+    this.viewsLoadingState = LoadingState.LOADING;
+    const vdbName = this.currentVirtualization.getServiceVdbName();
+    const modelName = this.currentVirtualization.getServiceViewModel();
+    const self = this;
+    this.vdbService
+      .getVdbModelViews(vdbName, modelName)
+      .subscribe(
+        (views) => {
+          self.currentVirtualization.setViews(views);
+          self.views = self.currentVirtualization.getViews();
+          self.setViewsEditableState(true);
+          this.viewsLoadingState = LoadingState.LOADED_VALID;
+        },
+        (error) => {
+          self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
+          self.viewCreateInProgress = false;
+          this.viewsLoadingState = LoadingState.LOADED_INVALID;
         }
       );
   }

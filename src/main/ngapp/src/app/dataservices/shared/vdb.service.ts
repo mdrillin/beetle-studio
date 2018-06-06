@@ -31,7 +31,8 @@ import { environment } from "@environments/environment";
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
 import { SchemaNode } from "@connections/shared/schema-node.model";
-import { Connection} from "@connections/shared/connection.model";
+import { Connection } from "@connections/shared/connection.model";
+import { View } from "@dataservices/shared/view.model";
 
 @Injectable()
 /**
@@ -227,6 +228,24 @@ export class VdbService extends ApiService {
         vdbModelSource, this.getAuthRequestOptions())
       .map((response) => {
         return response.ok;
+      })
+      .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Get the views from the specified Vdb model from the komodo rest interface
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @returns {Observable<View[]>}
+   */
+  public getVdbModelViews(vdbName: string, modelName: string): Observable<View[]> {
+    return this.http
+      .get(environment.komodoWorkspaceUrl + VdbsConstants.vdbsRootPath + "/" + vdbName
+                                              + VdbsConstants.vdbModelsRootPath + "/"
+                                              + modelName + "/Views", this.getAuthRequestOptions())
+      .map((response) => {
+        const views = response.json();
+        return views.map((view) => View.create( view ));
       })
       .catch( ( error ) => this.handleError( error ) );
   }

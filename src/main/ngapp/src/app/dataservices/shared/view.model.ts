@@ -21,12 +21,22 @@ import { SchemaNode } from "@connections/shared/schema-node.model";
  * View model
  */
 export class View {
-  private name: string;
+  private keng__id: string;
   private description: string;
   private isSelected = false;
   private isValid = false;
   private isEditable = false;
   private sources: SchemaNode[] = [];
+
+  /**
+   * @param {Object} json the JSON representation of a View
+   * @returns {View} the new View (never null)
+   */
+  public static create( json: object = {} ): View {
+    const view = new View();
+    view.setValues( json );
+    return view;
+  }
 
   constructor() {
     // nothing to do
@@ -36,14 +46,14 @@ export class View {
    * @returns {string} the table name
    */
   public getName(): string {
-    return this.name;
+    return this.keng__id;
   }
 
   /**
    * @param {string} name the table name
    */
   public setName( name?: string ): void {
-    this.name = name ? name : null;
+    this.keng__id = name ? name : null;
   }
 
   /**
@@ -108,6 +118,14 @@ export class View {
    */
   public set editable( editable: boolean ) {
     this.isEditable = editable;
+  }
+
+  /**
+   * Set all object values using the supplied View json
+   * @param {Object} values
+   */
+  public setValues(values: object = {}): void {
+    Object.assign(this, values);
   }
 
 }

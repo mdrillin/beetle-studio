@@ -20,5 +20,6 @@
  * Style the message log table so that it extends the entire width.
  */
 #message-log-table {
+  margin: 0 20px;
   width: 100%;
 }
