@@ -44,7 +44,10 @@
       <a *ngIf="!view.editable">{{ view.getName() }}</a>
     </div>
     <div class="row">
-      <div class="object-card-description">{{ view.getDescription() }}</div>
+      <div class="object-card-description">
+        {{ view.getDescription() }}
+        <div><span class="fa fa-database"></span>&nbsp;&nbsp;<strong>{{ sourceTableText }}</strong></div>
+      </div>
     </div>
   </ng-template>
   <!--

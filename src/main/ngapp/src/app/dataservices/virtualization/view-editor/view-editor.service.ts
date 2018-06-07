@@ -357,11 +357,11 @@ export class ViewEditorService {
     }
 
     // Resets all of the views in the service VDB
-    this._vdbService.setVdbModelViews(serviceVdbName,
-                                      serviceVdbModelName,
-                                      viewNames,
-                                      sourceNodes,
-                                      connections)
+    this._vdbService.compositeSetVdbModelViews(serviceVdbName,
+                                               serviceVdbModelName,
+                                               viewNames,
+                                               sourceNodes,
+                                               connections)
       .subscribe(
         (wasSuccess) => {
           alert("View Save was successful!");
