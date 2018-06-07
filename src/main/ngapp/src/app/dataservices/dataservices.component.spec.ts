@@ -37,6 +37,7 @@ import {
   WizardModule } from "patternfly-ng";
 import { AccordionModule } from 'ngx-bootstrap';
 import { TooltipModule } from 'ngx-bootstrap';
+import { SelectionService } from "@core/selection.service";
 
 describe("DataservicesComponent", () => {
   let component: DataservicesComponent;
@@ -75,6 +76,7 @@ describe("DataservicesComponent", () => {
       providers: [
         AppSettingsService,
         NotifierService,
+        SelectionService,
         WizardService,
         { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: ConnectionService, useClass: MockConnectionService },

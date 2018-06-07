@@ -1,0 +1,36 @@
+/*
+ * The container of the canvas and properties editors.
+ */
+#view-editor-canvas-editor {
+  display: grid;
+  grid-template-areas:
+    "canvas-editor properties-editor";
+  grid-template-columns: 8fr 2fr;
+  height: 100%;
+}
+
+/*
+ * View editor canvas section in the middle-left of editor.
+ */
+#view-editor-canvas-container {
+  background-color: white;
+  grid-area: canvas-editor;
+}
+
+/*
+ * View editor middle-right section containing property editors based on selection in the canvas.
+ */
+#view-editor-properties-container {
+  grid-area: properties-editor;
+}
+
+.alert-padding {
+  padding-top: 80px;
+}
+
+.selected-table-container {
+  background-color: white;
+  max-height: 480px;
+  margin-top: 70px;
+  overflow-y: auto;
+}

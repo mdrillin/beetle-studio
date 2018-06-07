@@ -23,18 +23,34 @@ import { RouterModule } from "@angular/router";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
+import { AddDataserviceWizardComponent } from "@dataservices/add-dataservice-wizard/add-dataservice-wizard.component";
+import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-dataservice.component";
+import { ConnectionNodeSelectorComponent } from "@dataservices/connection-node-selector/connection-node-selector.component";
+import { ConnectionSchemaTreeComponent } from "@dataservices/connection-schema-tree/connection-schema-tree.component";
+import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
+import { SelectionService } from "@core/selection.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
 import { DataservicesDetailsComponent } from "@dataservices/dataservices-list/dataservices-details.component";
 import { DataservicesListComponent } from "@dataservices/dataservices-list/dataservices-list.component";
 import { ViewsContentComponent } from "@dataservices/dataservices-list/views-content.component";
 import { DataservicesRoutingModule } from "@dataservices/dataservices-routing.module";
 import { DataservicesComponent } from "@dataservices/dataservices.component";
+import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
+import { SelectedNodesListComponent } from "@dataservices/selected-nodes-list/selected-nodes-list.component";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
 import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
 import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
+import { SqlControlComponent } from "@dataservices/sql-control/sql-control.component";
+import { TestDataserviceComponent } from "@dataservices/test-dataservice/test-dataservice.component";
+import { ViewCanvasComponent } from "@dataservices/virtualization/view-editor/view-canvas/view-canvas.component";
+import { ViewEditorHeaderComponent } from "@dataservices/virtualization/view-editor/view-editor-header/view-editor-header.component";
+import { ViewEditorComponent } from "@dataservices/virtualization/view-editor/view-editor.component";
+import { ViewPreviewComponent } from "@dataservices/virtualization/view-editor/editor-views/view-preview/view-preview.component";
+import { EditorViewsComponent } from '@dataservices/virtualization/view-editor/editor-views/editor-views.component';
+import { MessageLogComponent } from '@dataservices/virtualization/view-editor/editor-views/message-log/message-log.component';
 import { environment } from "@environments/environment";
 import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.component";
 import { SharedModule } from "@shared/shared.module";
@@ -50,19 +66,13 @@ import {
   SortModule,
   TableModule,
   WizardModule } from "patternfly-ng";
-import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
-import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
-import { ConnectionNodeSelectorComponent } from "./connection-node-selector/connection-node-selector.component";
-import { ConnectionSchemaTreeComponent } from "./connection-schema-tree/connection-schema-tree.component";
-import { DataserviceCardComponent } from "./dataservices-cards/dataservice-card/dataservice-card.component";
-import { SelectedNodeComponent } from "./selected-node/selected-node.component";
-import { SelectedNodesListComponent } from "./selected-nodes-list/selected-nodes-list.component";
-import { SqlControlComponent } from "./sql-control/sql-control.component";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
-import { TestDataserviceComponent } from "./test-dataservice/test-dataservice.component";
-import { BsDropdownModule } from 'ngx-bootstrap';
-import { AccordionModule } from 'ngx-bootstrap';
-import { TooltipModule } from 'ngx-bootstrap';
+import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
+import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
+import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.component";
+import { VirtualizationComponent } from "./virtualization/virtualization.component";
+import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/connection-table-dialog/connection-tree-selector/connection-tree-selector.component';
+import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
 
 @NgModule({
   imports: [
@@ -86,7 +96,8 @@ import { TooltipModule } from 'ngx-bootstrap';
     NotificationModule,
     SortModule,
     TableModule,
-    WizardModule
+    WizardModule,
+    TabsModule.forRoot()
   ],
   declarations: [
     DataservicesDetailsComponent,
@@ -103,7 +114,18 @@ import { TooltipModule } from 'ngx-bootstrap';
     DataserviceCardComponent,
     ConnectionSchemaTreeComponent,
     SelectedNodesListComponent,
-    ConnectionNodeSelectorComponent
+    ConnectionNodeSelectorComponent,
+    ViewEditorComponent,
+    ViewPreviewComponent,
+    ViewEditorHeaderComponent,
+    ViewCanvasComponent,
+    VirtualizationComponent,
+    ViewCardsComponent,
+    ViewCardComponent,
+    MessageLogComponent,
+    EditorViewsComponent,
+    ConnectionTreeSelectorComponent,
+    ConnectionTableDialogComponent
   ],
   providers: [
     {
@@ -120,11 +142,12 @@ import { TooltipModule } from 'ngx-bootstrap';
     },
     LoggerService,
     NotifierService,
+    SelectionService,
     WizardService
   ],
   exports: [
   ],
-  entryComponents: [ConfirmDialogComponent]
+  entryComponents: [ConfirmDialogComponent, ConnectionTableDialogComponent]
 })
 export class DataservicesModule { }
 
