@@ -125,6 +125,19 @@ export class ViewCardComponent implements DoCheck, OnInit {
   }
 
   /**
+   * Returns display text for the selected view source
+   * @returns {string}
+   */
+  public get sourceTableText(): string {
+    let sourceText = "[No Source Selected]";
+    const nodes = this.view.getSources();
+    if (nodes && nodes.length > 0) {
+      sourceText = "[" + nodes[0].getConnectionName() + "]  " + nodes[0].getName();
+    }
+    return sourceText;
+  }
+
+  /**
    * An event handler for footer action link.
    * @param {CardAction} $event the event being processed
    */

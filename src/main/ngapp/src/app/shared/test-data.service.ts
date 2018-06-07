@@ -783,8 +783,8 @@ export class TestDataService {
         "tbl2View"
       ],
       "serviceViewTables": [
-        TestDataService.conn1.getId().toLowerCase() + "schemavdb.tbl1",
-        TestDataService.conn1.getId().toLowerCase() + "schemavdb.tbl1"
+        "connection=" + TestDataService.conn1.getId().toLowerCase() + "/schema=public/table=tbl1",
+        "connection=" + TestDataService.conn1.getId().toLowerCase() + "/schema=public/table=tbl1"
       ],
       "connections": 0,
       "drivers": 0,
@@ -831,10 +831,10 @@ export class TestDataService {
         "tbl4View"
       ],
       "serviceViewTables": [
-        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl1",
-        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl2",
-        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl3",
-        TestDataService.conn2.getId().toLowerCase() + "schemavdb.tbl4"
+        "connection=" + TestDataService.conn2.getId().toLowerCase() + "/schema=public/table=tbl1",
+        "connection=" + TestDataService.conn2.getId().toLowerCase() + "/schema=public/table=tbl2",
+        "connection=" + TestDataService.conn2.getId().toLowerCase() + "/schema=public/table=tbl3",
+        "connection=" + TestDataService.conn2.getId().toLowerCase() + "/schema=public/table=tbl4"
       ],
       "connections": 0,
       "drivers": 0,
@@ -883,12 +883,12 @@ export class TestDataService {
         "tbl6View"
       ],
       "serviceViewTables": [
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl1",
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl2",
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl3",
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl4",
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl5",
-        TestDataService.conn3.getId().toLowerCase() + "schemavdb.tbl6"
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl1",
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl2",
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl3",
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl4",
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl5",
+        "connection=" + TestDataService.conn3.getId().toLowerCase() + "/schema=public/table=tbl6"
       ],
       "connections": 0,
       "drivers": 0,

@@ -89,7 +89,7 @@ export class View {
    * @returns {boolean} true if valid
    */
   public get valid(): boolean {
-    return this.isValid;
+    return this.keng__id != null && this.sources.length > 0;
   }
 
   /**

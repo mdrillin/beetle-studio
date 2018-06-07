@@ -271,7 +271,7 @@ export class VdbService extends ApiService {
       const connName = schemaNode.getConnectionName();
       let nodeConn: Connection = null;
       for ( const conn of connections ) {
-        if ( conn.getId() === connName ) {
+        if ( conn.getId().toLowerCase() === connName.toLowerCase() ) {
           nodeConn = conn;
           break;
         }
@@ -454,6 +454,21 @@ export class VdbService extends ApiService {
         return response.ok;
       })
       .catch( ( error ) => this.handleError( error ) );
+  }
+
+  /**
+   * Composite service which 1) undeploys current service VDB and 2) sets the Vdb Model Views.
+   * @param {string} vdbName the vdb name
+   * @param {string} modelName the model name
+   * @param {string[]} viewNames the view names (1:1 correspondence with schemaNodes)
+   * @param {SchemaNode[]} schemaNodes the source node for each view
+   * @param {Connection[]} connections the array of active connections
+   * @returns {Observable<boolean>}
+   */
+  public compositeSetVdbModelViews(vdbName: string, modelName: string, viewNames: string[],
+                                   schemaNodes: SchemaNode[], connections: Connection[]): Observable<boolean> {
+    return this.undeployVdb(vdbName)
+      .flatMap((res) => this.setVdbModelViews(vdbName, modelName, viewNames, schemaNodes, connections));
   }
 
 }
