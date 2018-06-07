@@ -20,7 +20,17 @@ import { WizardService } from "@dataservices/shared/wizard.service";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
 import { PropertyFormComponent } from "@shared/property-form/property-form.component";
 import { TreeModule } from "angular-tree-component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule
+} from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard.component";
 
 describe("AddDataserviceWizardComponent", () => {
@@ -29,7 +39,22 @@ describe("AddDataserviceWizardComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, FormsModule, PatternFlyNgModule, ReactiveFormsModule, RouterTestingModule, TreeModule ],
+      imports: [
+        CoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        TreeModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ AddDataserviceWizardComponent, ConnectionNodeSelectorComponent, ConnectionSchemaTreeComponent,
                       PropertyFormComponent, PropertyFormPropertyComponent,
                       SelectedNodesListComponent, SelectedNodeComponent ],

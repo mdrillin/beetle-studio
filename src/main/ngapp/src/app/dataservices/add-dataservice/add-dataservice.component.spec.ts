@@ -20,7 +20,16 @@ import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { SharedModule } from "@shared/shared.module";
 import { TreeModule } from "angular-tree-component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { AddDataserviceComponent } from "./add-dataservice.component";
 
 describe("AddDataserviceComponent", () => {
@@ -29,7 +38,23 @@ describe("AddDataserviceComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ CoreModule, PatternFlyNgModule, FormsModule, ReactiveFormsModule, RouterTestingModule, SharedModule, TreeModule ],
+      imports: [
+        CoreModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        SharedModule,
+        TreeModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule
+      ],
       declarations: [ AddDataserviceComponent, AddDataserviceWizardComponent, ConnectionNodeSelectorComponent,
                       ConnectionSchemaTreeComponent, SelectedNodesListComponent, SelectedNodeComponent ],
       providers: [

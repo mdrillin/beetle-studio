@@ -40,7 +40,16 @@ import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.co
 import { SharedModule } from "@shared/shared.module";
 import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { AddDataserviceWizardComponent } from "./add-dataservice-wizard/add-dataservice-wizard.component";
 import { AddDataserviceComponent } from "./add-dataservice/add-dataservice.component";
 import { ConnectionNodeSelectorComponent } from "./connection-node-selector/connection-node-selector.component";
@@ -64,12 +73,20 @@ import { TooltipModule } from 'ngx-bootstrap';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    PatternFlyNgModule,
     CodemirrorModule,
     TreeModule,
     BsDropdownModule.forRoot(),
     AccordionModule.forRoot(),
-    TooltipModule.forRoot()
+    TooltipModule.forRoot(),
+    ActionModule,
+    CardModule,
+    EmptyStateModule,
+    FilterModule,
+    ListModule,
+    NotificationModule,
+    SortModule,
+    TableModule,
+    WizardModule
   ],
   declarations: [
     DataservicesDetailsComponent,
