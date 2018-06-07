@@ -424,6 +424,7 @@ export class VirtualizationComponent implements OnInit {
     this.currentVirtualization.setViews(virtViews);
     this.views = this.currentVirtualization.getViews();
     this.setViewsEditableState(true);
+    this.viewsLoadingState = LoadingState.LOADED_VALID;
     // const self = this;
     // this.vdbService
     //   .getVdbModelViews(vdbName, modelName)
