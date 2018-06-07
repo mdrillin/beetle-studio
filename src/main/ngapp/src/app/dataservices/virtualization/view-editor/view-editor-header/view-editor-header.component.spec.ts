@@ -1,9 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpModule } from "@angular/http";
 import { FormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { LoggerService } from "@core/logger.service";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { ViewEditorHeaderComponent } from '@dataservices/virtualization/view-editor/view-editor-header/view-editor-header.component';
+import { VdbService } from "@dataservices/shared/vdb.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 
 describe('ViewEditorHeaderComponent', () => {
   let component: ViewEditorHeaderComponent;
@@ -11,9 +17,19 @@ describe('ViewEditorHeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ FormsModule, RouterTestingModule ],
+      imports: [
+        FormsModule,
+        HttpModule,
+        RouterTestingModule
+      ],
       declarations: [ ViewEditorHeaderComponent ],
-      providers: [ LoggerService, ViewEditorService ]
+      providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
+        LoggerService,
+        NotifierService,
+        { provide: VdbService, useClass: MockVdbService },
+        ViewEditorService
+      ]
     })
     .compileComponents();
   }));

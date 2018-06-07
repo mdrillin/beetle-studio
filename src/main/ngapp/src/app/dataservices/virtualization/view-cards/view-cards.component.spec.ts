@@ -3,7 +3,16 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { LoggerService } from "@core/logger.service";
 import { ViewCardsComponent } from "@dataservices/virtualization/view-cards/view-cards.component";
 import { ViewCardComponent } from "@dataservices/virtualization/view-cards/view-card/view-card.component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 
 describe('ViewCardsComponent', () => {
   let component: ViewCardsComponent;
@@ -16,14 +25,24 @@ describe('ViewCardsComponent', () => {
         ViewCardComponent
       ],
       imports: [
-        PatternFlyNgModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule,
         RouterTestingModule
       ],
       providers: [
         LoggerService
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

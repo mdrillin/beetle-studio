@@ -74,7 +74,6 @@ describe("DataservicesComponent", () => {
                       OdataControlComponent,
                       ViewsContentComponent ],
       providers: [
-        AppSettingsService,
         NotifierService,
         SelectionService,
         WizardService,
