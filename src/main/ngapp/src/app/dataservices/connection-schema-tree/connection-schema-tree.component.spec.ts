@@ -26,7 +26,9 @@ describe("ConnectionSchemaTreeComponent", () => {
         { provide: VdbService, useClass: MockVdbService }
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

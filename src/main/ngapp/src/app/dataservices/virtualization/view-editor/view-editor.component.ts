@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
+import { Component, DoCheck, OnDestroy, OnInit, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { SelectionService } from "@core/selection.service";
 import { Connection } from "@connections/shared/connection.model";
@@ -42,7 +42,7 @@ import { Subscription } from "rxjs/Subscription";
   styleUrls: ["./view-editor.component.css"],
   providers: [ ViewEditorService ]
 })
-export class ViewEditorComponent implements OnInit, OnDestroy {
+export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
 
   private actionConfig: ActionConfig;
   private connections: Connection[] = [];
@@ -76,6 +76,19 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   private readonly saveActionId = "saveActionId";
   private readonly undoActionId = "undoActionId";
   private readonly warningsActionId = "warningsActionId";
+
+  //
+  // Toolbar action indexes (must stay in sync with the ActionConfig)
+  //
+  private readonly addSourceActionIndex = 0;
+  private readonly addCompositionActionIndex = 1;
+  private readonly saveActionIndex = 2;
+  private readonly redoActionIndex = 3;
+  private readonly undoActionIndex = 4;
+  private readonly deleteActionIndex = 5;
+  private readonly errorsActionIndex = 6;
+  private readonly infosActionIndex = 7;
+  private readonly warningsActionIndex = 8;
 
   constructor( connectionService: ConnectionService,
                selectionService: SelectionService,
@@ -113,7 +126,10 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   private canSave(): boolean {
-    return !this.fatalErrorOccurred && !this.editorService.isReadOnly() && this.editorService.hasChanges();
+    return !this.fatalErrorOccurred
+           && !this.editorService.isReadOnly()
+           && this.editorService.getErrorMessageCount() === 0
+           && this.editorService.hasChanges();
   }
 
   private canUndo(): boolean {
@@ -408,6 +424,23 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Executed by javascript framework when something changes. Used to set then enable state of the toolbar buttons.
+   */
+  public ngDoCheck(): void {
+    if (this.actionConfig ) {
+      this.actionConfig.primaryActions[ this.addCompositionActionIndex ].disabled = !this.canAddComposition();
+      this.actionConfig.primaryActions[ this.addSourceActionIndex ].disabled = !this.canAddSource();
+      this.actionConfig.primaryActions[ this.deleteActionIndex ].disabled = !this.canDelete();
+      this.actionConfig.primaryActions[ this.errorsActionIndex ].disabled = !this.hasErrors();
+      this.actionConfig.primaryActions[ this.infosActionIndex ].disabled = !this.hasInfos();
+      this.actionConfig.primaryActions[ this.redoActionIndex ].disabled = !this.canRedo();
+      this.actionConfig.primaryActions[ this.saveActionIndex ].disabled = !this.canSave();
+      this.actionConfig.primaryActions[ this.undoActionIndex ].disabled = !this.canUndo();
+      this.actionConfig.primaryActions[ this.warningsActionIndex ].disabled = !this.hasWarnings();
+    }
+  }
+
+  /**
    * Cleanup code when destroying the editor.
    */
   public ngOnDestroy(): void {
@@ -491,9 +524,6 @@ export class ViewEditorComponent implements OnInit, OnDestroy {
         this.editorService.addMessage( msg, ViewEditorPart.EDITOR );
       }
     }
-
-
-    console.error( "*** Number of messages: " + messages.length );
   }
 
   /**

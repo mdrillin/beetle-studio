@@ -21,6 +21,7 @@ import { ViewEditorService } from "@dataservices/virtualization/view-editor/view
 import { Subscription } from "rxjs/Subscription";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
+import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -34,7 +35,7 @@ export class MessageLogComponent implements OnInit, OnDestroy {
   private emptyStateConfig: EmptyStateConfig;
   public ngxConfig: NgxDataTableConfig;
   public tableConfig: TableConfig;
-  public rows: any[] = [];
+  // public rows: any[] = [];
 
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
@@ -45,31 +46,31 @@ export class MessageLogComponent implements OnInit, OnDestroy {
     this.logger = logger;
     this.editorService = editorService;
   }
-
-  private clearMessages(): void {
-    if ( this.rows && this.rows.length !== 0 ) {
-      this.rows = [];
-    }
-  }
+  //
+  // private clearMessages(): void {
+  //   if ( this.rows && this.rows.length !== 0 ) {
+  //     this.rows = [];
+  //   }
+  // }
 
   /**
    * @param {ViewEditorEvent} event the event being processed
    */
   public handleEditorEvent( event: ViewEditorEvent ): void {
     this.logger.debug( "MessageLogComponent received event: " + event.toString() );
-
-    if ( event.typeIsLogMessageAdded() ) {
-      this.rows.push( event.args[ 0 ] );
-    } else if ( event.typeIsLogMessageDeleted() ) {
-      const deletedMsg = event.args[ 0 ];
-      const index = this.rows.findIndex( ( msg ) => msg.id === deletedMsg.id );
-
-      if ( index !== -1 ) {
-        this.rows.splice( index, 1 );
-      }
-    } else if ( event.typeIsLogMessagesCleared() ) {
-      this.clearMessages();
-    }
+    //
+    // if ( event.typeIsLogMessageAdded() ) {
+    //   this.rows.push( event.args[ 0 ] );
+    // } else if ( event.typeIsLogMessageDeleted() ) {
+    //   const deletedMsg = event.args[ 0 ];
+    //   const index = this.rows.findIndex( ( msg ) => msg.id === deletedMsg.id );
+    //
+    //   if ( index !== -1 ) {
+    //     this.rows.splice( index, 1 );
+    //   }
+    // } else if ( event.typeIsLogMessagesCleared() ) {
+    //   this.clearMessages();
+    // }
   }
 
   /**
@@ -100,8 +101,6 @@ export class MessageLogComponent implements OnInit, OnDestroy {
       },
     ];
 
-    this.rows = this.editorService.getMessages();
-
     this.ngxConfig = {
       headerHeight: 40,
       rowHeight: 20,
@@ -116,6 +115,13 @@ export class MessageLogComponent implements OnInit, OnDestroy {
     this.tableConfig = {
       emptyStateConfig: this.emptyStateConfig
     } as TableConfig;
+  }
+
+  /**
+   * @returns {Message[]} the log messages
+   */
+  public get rows(): Message[] {
+    return this.editorService.getMessages();
   }
 
 }

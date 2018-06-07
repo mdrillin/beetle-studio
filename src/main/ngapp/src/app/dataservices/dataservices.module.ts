@@ -56,7 +56,17 @@ import { ConfirmDialogComponent } from "@shared/confirm-dialog/confirm-dialog.co
 import { SharedModule } from "@shared/shared.module";
 import { TreeModule } from "angular-tree-component";
 import { CodemirrorModule } from "ng2-codemirror";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  ToolbarModule,
+  WizardModule } from "patternfly-ng";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
 import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
 import { ViewCardComponent } from "./virtualization/view-cards/view-card/view-card.component";
@@ -74,12 +84,21 @@ import { ConnectionTableDialogComponent } from './virtualization/view-editor/con
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    PatternFlyNgModule,
     CodemirrorModule,
     TreeModule,
     BsDropdownModule.forRoot(),
     AccordionModule.forRoot(),
     TooltipModule.forRoot(),
+    ActionModule,
+    CardModule,
+    EmptyStateModule,
+    FilterModule,
+    ListModule,
+    NotificationModule,
+    SortModule,
+    TableModule,
+    ToolbarModule,
+    WizardModule,
     TabsModule.forRoot()
   ],
   declarations: [

@@ -14,7 +14,15 @@ import { NotifierService } from "@dataservices/shared/notifier.service";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { WizardService } from "@dataservices/shared/wizard.service";
 import { TreeModule } from "angular-tree-component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  WizardModule } from "patternfly-ng";
 import { ConnectionNodeSelectorComponent } from "./connection-node-selector.component";
 
 describe("ConnectionNodeSelectorComponent", () => {
@@ -23,7 +31,18 @@ describe("ConnectionNodeSelectorComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpModule, PatternFlyNgModule, TreeModule ],
+      imports: [
+        HttpModule,
+        TreeModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        WizardModule
+      ],
       declarations: [ ConnectionNodeSelectorComponent, ConnectionSchemaTreeComponent, SelectedNodesListComponent,
                       SelectedNodeComponent ],
       providers: [
@@ -33,7 +52,9 @@ describe("ConnectionNodeSelectorComponent", () => {
         { provide: VdbService, useClass: MockVdbService }
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

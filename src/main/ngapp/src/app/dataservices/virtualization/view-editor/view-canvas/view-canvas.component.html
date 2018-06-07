@@ -5,17 +5,15 @@
   <!-- ============================ -->
   <div class="view-editor-area"
        id="view-editor-canvas-container">
-    <div class="col-sm-3">
       <div class="alert-padding" *ngIf="!hasViewSources">
-        <div class="alert alert-info">
+        <div class="alert alert-info text-center">
           <span class="pficon pficon-info"></span>
           <strong>Select a source for the view</strong>
         </div>
       </div>
-      <div class = "container-fluid container-cards-pf selected-table-container" *ngIf="hasViewSources">
+      <div class="object-card-container" *ngIf="hasViewSources">
         <app-selected-node [node]="viewSources[0]" (selectionNodeRemoved)="onViewSourceRemoved($event)"></app-selected-node>
       </div>
-    </div>
   </div>
 
   <!-- ================================ -->
