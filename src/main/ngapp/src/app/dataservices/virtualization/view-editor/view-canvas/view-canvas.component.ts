@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
 import { Subscription } from "rxjs/Subscription";
 import { SchemaNode } from "@connections/shared/schema-node.model";
+import { ViewEditorPart } from "@dataservices/virtualization/view-editor/view-editor-part.enum";
+import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: "app-view-canvas",
   templateUrl: "./view-canvas.component.html",
   styleUrls: ["./view-canvas.component.css"]
@@ -98,6 +101,7 @@ export class ViewCanvasComponent implements OnInit, OnDestroy {
    */
   public onViewSourceRemoved( source: SchemaNode ): void {
     this.editorService.getEditorView().setSources([]);
+    this.editorService.fireViewStateHasChanged( ViewEditorPart.CANVAS, ViewStateChangeId.SOURCES_CHANGED, [] );
   }
 
 }

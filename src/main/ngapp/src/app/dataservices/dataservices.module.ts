@@ -65,6 +65,7 @@ import {
   NotificationModule,
   SortModule,
   TableModule,
+  ToolbarModule,
   WizardModule } from "patternfly-ng";
 import { OdataControlComponent } from "./odata-control/odata-control.component";
 import { AccordionModule, BsDropdownModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
@@ -96,6 +97,7 @@ import { ConnectionTableDialogComponent } from './virtualization/view-editor/con
     NotificationModule,
     SortModule,
     TableModule,
+    ToolbarModule,
     WizardModule,
     TabsModule.forRoot()
   ],

@@ -25,12 +25,6 @@
 }
 
 .alert-padding {
-  padding-top: 80px;
-}
-
-.selected-table-container {
-  background-color: white;
-  max-height: 480px;
-  margin-top: 70px;
-  overflow-y: auto;
+  padding: 80px 20px;
+  width: 300px;
 }
