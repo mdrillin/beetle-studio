@@ -271,7 +271,7 @@ export class VdbService extends ApiService {
       const connName = schemaNode.getConnectionName();
       let nodeConn: Connection = null;
       for ( const conn of connections ) {
-        if ( conn.getId() === connName ) {
+        if ( conn.getId().toLowerCase() === connName.toLowerCase() ) {
           nodeConn = conn;
           break;
         }

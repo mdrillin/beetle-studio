@@ -13,6 +13,7 @@ import { ActionConfig, EmptyStateConfig } from "patternfly-ng";
 import { NewDataservice } from "@dataservices/shared/new-dataservice.model";
 import { VdbService } from "@dataservices/shared/vdb.service";
 import { LoadingState } from "@shared/loading-state.enum";
+import { SchemaNode } from "@connections/shared/schema-node.model";
 
 @Component({
   selector: "app-virtualization",
@@ -404,22 +405,63 @@ export class VirtualizationComponent implements OnInit {
     this.viewsLoadingState = LoadingState.LOADING;
     const vdbName = this.currentVirtualization.getServiceVdbName();
     const modelName = this.currentVirtualization.getServiceViewModel();
-    const self = this;
-    this.vdbService
-      .getVdbModelViews(vdbName, modelName)
-      .subscribe(
-        (views) => {
-          self.currentVirtualization.setViews(views);
-          self.views = self.currentVirtualization.getViews();
-          self.setViewsEditableState(true);
-          this.viewsLoadingState = LoadingState.LOADED_VALID;
-        },
-        (error) => {
-          self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
-          self.viewCreateInProgress = false;
-          this.viewsLoadingState = LoadingState.LOADED_INVALID;
-        }
-      );
+    const viewNames = this.currentVirtualization.getServiceViewNames();
+    const viewSourceTables = this.currentVirtualization.getServiceViewTables();
+
+    const virtViews: View[] = [];
+    for (let i = 0; i < viewNames.length; i++) {
+      const viewName = viewNames[i];
+      const sourceNode = this.getSourceNode(viewSourceTables[i]);
+      const sourceNodes: SchemaNode[] = [sourceNode];
+
+      const view = new View();
+      view.setName(viewName);
+      view.setSources(sourceNodes);
+
+      virtViews.push(view);
+    }
+
+    this.currentVirtualization.setViews(virtViews);
+    this.views = this.currentVirtualization.getViews();
+    this.setViewsEditableState(true);
+    // const self = this;
+    // this.vdbService
+    //   .getVdbModelViews(vdbName, modelName)
+    //   .subscribe(
+    //     (views) => {
+    //       self.currentVirtualization.setViews(views);
+    //       self.views = self.currentVirtualization.getViews();
+    //       self.setViewsEditableState(true);
+    //       this.viewsLoadingState = LoadingState.LOADED_VALID;
+    //     },
+    //     (error) => {
+    //       self.logger.error("[VirtualizationComponent] Error updating the views for the virtualization: %o", error);
+    //       self.viewCreateInProgress = false;
+    //       this.viewsLoadingState = LoadingState.LOADED_INVALID;
+    //     }
+    //   );
+  }
+
+  private getSourceNode(nodeFqn: string): SchemaNode {
+
+    const fqnArray = nodeFqn.split("/", 10);
+
+    const arrayLength = fqnArray.length;
+    const connectionSegment = fqnArray[0];
+    let parts = connectionSegment.split("=", 2);
+    const connName = parts[1];
+
+    const nodeSeqment = fqnArray[arrayLength - 1];
+    parts = nodeSeqment.split("=", 2);
+    const nodeName = parts[1];
+    const nodeType = parts[0];
+
+    const schemaNode = new SchemaNode();
+    schemaNode.setConnectionName(connName);
+    schemaNode.setName(nodeName);
+    schemaNode.setType(nodeType);
+
+    return schemaNode;
   }
 
   /*
