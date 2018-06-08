@@ -31,9 +31,11 @@ import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/ev
 import { ConnectionTableDialogComponent } from "@dataservices/virtualization/view-editor/connection-table-dialog/connection-table-dialog.component";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
 import { ViewValidator } from "@dataservices/virtualization/view-editor/view-validator";
-import { BsModalService } from "ngx-bootstrap";
+import { BsModalRef, BsModalService } from "ngx-bootstrap";
 import { Action, ActionConfig, ToolbarConfig, ToolbarView } from "patternfly-ng";
 import { Subscription } from "rxjs/Subscription";
+import { ViewEditorSaveProgressChangeId } from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
+import { ProgressDialogComponent } from "@shared/progress-dialog/progress-dialog.component";
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -52,6 +54,7 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   private isNewView = false;
   private readonly logger: LoggerService;
   private modalService: BsModalService;
+  private progressModalRef: BsModalRef;
   private subscription: Subscription;
 
   public toolbarConfig: ToolbarConfig;
@@ -379,6 +382,24 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
         if ( ( event.args[ 0 ] === ViewEditorPart.PREVIEW || event.args[ 0 ] === ViewEditorPart.MESSAGE_LOG )
            && !this.isShowingAdditionalViews ) {
           this.editorService.setEditorConfig( this.fullEditorCssType );
+        }
+      }
+    } else if ( event.typeIsEditorViewSaveProgressChanged() ) {
+      if ( event.args.length !== 0 ) {
+        // When save in progress, open the progress modal dialog.  On completion, hide it
+        if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.IN_PROGESS ) {
+          // Dialog Content
+          const message = "Saving View in Progress...";
+          const initialState = {
+            title: "Saving View",
+            bodyContent: message,
+          };
+
+          this.progressModalRef = this.modalService.show(ProgressDialogComponent, {initialState});
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ) {
+          setTimeout(() => this.progressModalRef.hide(), 2000);
+        } else if ( event.args[ 0 ] === ViewEditorSaveProgressChangeId.COMPLETED_FAILED ) {
+          setTimeout(() => { this.progressModalRef.hide(); alert("Save view failed!"); } , 2000);
         }
       }
     } else if ( event.typeIsViewStateChanged() ) {

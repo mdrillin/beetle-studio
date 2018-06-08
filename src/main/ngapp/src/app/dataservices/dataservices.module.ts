@@ -74,6 +74,7 @@ import { ViewCardsComponent } from "./virtualization/view-cards/view-cards.compo
 import { VirtualizationComponent } from "./virtualization/virtualization.component";
 import { ConnectionTreeSelectorComponent } from './virtualization/view-editor/connection-table-dialog/connection-tree-selector/connection-tree-selector.component';
 import { ConnectionTableDialogComponent } from './virtualization/view-editor/connection-table-dialog/connection-table-dialog.component';
+import {ProgressDialogComponent} from "@shared/progress-dialog/progress-dialog.component";
 
 @NgModule({
   imports: [
@@ -149,7 +150,7 @@ import { ConnectionTableDialogComponent } from './virtualization/view-editor/con
   ],
   exports: [
   ],
-  entryComponents: [ConfirmDialogComponent, ConnectionTableDialogComponent]
+  entryComponents: [ConfirmDialogComponent, ConnectionTableDialogComponent, ProgressDialogComponent]
 })
 export class DataservicesModule { }
 

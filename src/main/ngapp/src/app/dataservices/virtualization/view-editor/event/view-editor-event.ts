@@ -156,6 +156,13 @@ export class ViewEditorEvent {
   }
 
   /**
+   * @returns {boolean} `true` if the type is `ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED`
+   */
+  public typeIsEditorViewSaveProgressChanged(): boolean {
+    return this.type === ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED;
+  }
+
+  /**
    * @returns {boolean} `true` if the type is `ViewEditorEventType.LOG_MESSAGE_ADDED`
    */
   public typeIsLogMessageAdded(): boolean {
@@ -210,5 +217,4 @@ export class ViewEditorEvent {
   public typeIsViewValidChanged(): boolean {
     return this.type === ViewEditorEventType.VIEW_VALID_CHANGED;
   }
-
 }

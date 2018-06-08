@@ -29,6 +29,7 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
 import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { ViewEditorEventType } from "@dataservices/virtualization/view-editor/event/view-editor-event-type.enum";
 import { ViewStateChangeId } from "@dataservices/virtualization/view-editor/event/view-state-change-id.enum";
+import {ViewEditorSaveProgressChangeId} from "@dataservices/virtualization/view-editor/event/view-editor-save-progress-change-id.enum";
 
 @Injectable()
 export class ViewEditorService {
@@ -336,6 +337,10 @@ export class ViewEditorService {
    * Currently, this regenerates *all* of the views.
    */
   public saveView(connections: Connection[]): void {
+    // Fire save in progress event
+    this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                                                         [ ViewEditorSaveProgressChangeId.IN_PROGESS ] ) );
+
     const serviceVdbName = this._editorVirtualization.getServiceVdbName();
     const serviceVdbModelName = this._editorVirtualization.getServiceViewModel();
 
@@ -364,10 +369,14 @@ export class ViewEditorService {
                                                connections)
       .subscribe(
         (wasSuccess) => {
-          alert("View Save was successful!");
+          // Fire save completed success event
+          this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                                                               [ ViewEditorSaveProgressChangeId.COMPLETED_SUCCESS ] ) );
         },
         (error) => {
-          alert("View Save failed!");
+          // Fire save completed failed event
+          this.fire( ViewEditorEvent.create( ViewEditorPart.EDITOR, ViewEditorEventType.EDITOR_VIEW_SAVE_PROGRESS_CHANGED,
+                                                               [ ViewEditorSaveProgressChangeId.COMPLETED_FAILED ] ) );
         }
       );
   }

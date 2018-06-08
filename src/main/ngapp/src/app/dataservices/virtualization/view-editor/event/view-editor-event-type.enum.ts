@@ -33,6 +33,11 @@ export enum ViewEditorEventType {
   EDITOR_CONFIG_CHANGED = "EDITOR_CONFIG_CHANGED",
 
   /**
+   * An event indicating the view save progress has changed.
+   */
+  EDITOR_VIEW_SAVE_PROGRESS_CHANGED = "EDITOR_VIEW_SAVE_PROGRESS_CHANGED",
+
+  /**
    * An event indicating a log message has been added.
    */
   LOG_MESSAGE_ADDED = "LOG_MESSAGE_ADDED",
