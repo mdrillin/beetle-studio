@@ -408,15 +408,15 @@ export class ViewEditorComponent implements DoCheck, OnDestroy, OnInit {
   }
 
   private hasErrors(): boolean {
-    return true; // TODO this.errorMsgCount !== 0; (not working)
+    return this.errorMsgCount !== 0;
   }
 
   private hasInfos(): boolean {
-    return true; // TODO this.infoMsgCount !== 0; (not working)
+    return this.infoMsgCount !== 0;
   }
 
   private hasWarnings(): boolean {
-    return true; // TODO this.warningMsgCount !== 0; (not working)
+    return this.warningMsgCount !== 0;
   }
 
   /**

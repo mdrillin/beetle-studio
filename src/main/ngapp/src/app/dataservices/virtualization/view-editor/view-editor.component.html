@@ -51,16 +51,16 @@
               <span class="fa fa-plus view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #undoTemplate let-action="action">
-              <span class="fa fa-rotate-left view-editor-toolbar-icon" style="color: gold;"></span>
+              <span id="view-editor-toolbar-undo-button" class="fa fa-rotate-left view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #redoTemplate let-action="action">
-              <span class="fa fa-rotate-right view-editor-toolbar-icon" style="color: gold;"></span>
+              <span id="view-editor-toolbar-redo-button" class="fa fa-rotate-right view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #saveTemplate let-action="action">
               <span class="fa fa-save view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #deleteTemplate let-action="action">
-              <span class="pficon pficon-delete view-editor-toolbar-icon" style="color: var(--alert-color)"></span>
+              <span id="view-editor-toolbar-delete-button" class="pficon pficon-delete view-editor-toolbar-icon"></span>
             </ng-template>
             <ng-template #errorsTemplate let-action="action">
               <span class="pficon pficon-error-circle-o badge-pf-bordered view-editor-toolbar-icon">{{errorMsgCount}}</span>

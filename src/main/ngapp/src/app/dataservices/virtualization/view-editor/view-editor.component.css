@@ -105,6 +105,33 @@
   margin: 2px;
 }
 
+/*
+ * Remove default styling from the patternfly toolbar.
+ */
+#view-editor-toolbar .toolbar-pf {
+  background-color: inherit;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/*
+ * Colors the delete button icon.
+ */
+#view-editor-toolbar-delete-button {
+  color: var(--alert-color);
+}
+
+/*
+ * Gives the delete toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-delete-button {
+  color: var(--disabled-color);
+}
+
+/*
+ * Adds a margin to the right. Used in toolbar actions to end a group of actions.
+ */
 .view-editor-toolbar-end-group {
   margin-right: 1em;
 }
@@ -118,13 +145,38 @@
 }
 
 /*
- * Remove default styling from the patternfly toolbar.
+ * Gives the toolbar button icons a disabled look.
  */
-#view-editor-toolbar .toolbar-pf {
-  background-color: inherit;
-  border: none;
-  box-shadow: none;
-  padding: 0;
+[disabled] > .view-editor-toolbar-icon {
+  color: var(--disabled-color);
+}
+
+/*
+ * Colors the redo button icon.
+ */
+#view-editor-toolbar-redo-button {
+  color: gold;
+}
+
+/*
+ * Gives the redo toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-redo-button {
+  color: var(--disabled-color);
+}
+
+/*
+ * Colors the undo button icon.
+ */
+#view-editor-toolbar-undo-button {
+  color: gold;
+}
+
+/*
+ * Gives the undo toolbar button icon a disabled look.
+ */
+[disabled] > #view-editor-toolbar-undo-button {
+  color: var(--disabled-color);
 }
 
 /*
