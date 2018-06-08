@@ -26,6 +26,7 @@
              id="view-name-input"
              name="view-name-input"
              placeholder="Enter a view name"
+             autofocus
              [(ngModel)]="viewName"
              [readonly]="readOnly"
              (input)="viewNameChanged($event.target.value)"

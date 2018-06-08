@@ -109,7 +109,22 @@ export class ViewEditorEvent {
    * @returns {string} a string representation of the event
    */
   public toString(): string {
-    return `event type: ${this.type}, source: ${this.source}, arg count: ${this.args.length}`;
+    let text = `event type: ${this.type}, source: ${this.source}, args: `;
+    let firstTime = true;
+
+    if ( this.args && this.args.length !== 0 ) {
+      for ( const arg of this.args ) {
+        if ( firstTime ) {
+          firstTime = false;
+        } else {
+          text += ", ";
+        }
+
+        text += arg;
+      }
+    }
+
+    return text;
   }
 
   /**
