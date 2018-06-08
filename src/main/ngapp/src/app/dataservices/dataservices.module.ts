@@ -23,10 +23,6 @@ import { RouterModule } from "@angular/router";
 import { AppSettingsService } from "@core/app-settings.service";
 import { CoreModule } from "@core/core.module";
 import { LoggerService } from "@core/logger.service";
-import { AddDataserviceWizardComponent } from "@dataservices/add-dataservice-wizard/add-dataservice-wizard.component";
-import { AddDataserviceComponent } from "@dataservices/add-dataservice/add-dataservice.component";
-import { ConnectionNodeSelectorComponent } from "@dataservices/connection-node-selector/connection-node-selector.component";
-import { ConnectionSchemaTreeComponent } from "@dataservices/connection-schema-tree/connection-schema-tree.component";
 import { DataserviceCardComponent } from "@dataservices/dataservices-cards/dataservice-card/dataservice-card.component";
 import { SelectionService } from "@core/selection.service";
 import { DataservicesCardsComponent } from "@dataservices/dataservices-cards/dataservices-cards.component";
@@ -108,16 +104,12 @@ import {ProgressDialogComponent} from "@shared/progress-dialog/progress-dialog.c
     DataservicesCardsComponent,
     DataservicesComponent,
     DataservicesListComponent,
-    AddDataserviceWizardComponent,
-    AddDataserviceComponent,
     TestDataserviceComponent,
     SqlControlComponent,
     SelectedNodeComponent,
     OdataControlComponent,
     DataserviceCardComponent,
-    ConnectionSchemaTreeComponent,
     SelectedNodesListComponent,
-    ConnectionNodeSelectorComponent,
     ViewEditorComponent,
     ViewPreviewComponent,
     ViewEditorHeaderComponent,

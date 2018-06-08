@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProgressDialogComponent } from './progress-dialog.component';
+import { BsModalRef } from "ngx-bootstrap";
 
 describe('ProgressDialogComponent', () => {
   let component: ProgressDialogComponent;
@@ -8,7 +9,10 @@ describe('ProgressDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ProgressDialogComponent ]
+      declarations: [ ProgressDialogComponent ],
+      providers: [
+        BsModalRef
+      ]
     })
     .compileComponents();
   }));
