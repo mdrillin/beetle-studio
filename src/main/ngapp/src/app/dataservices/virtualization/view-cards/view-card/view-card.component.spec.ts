@@ -1,7 +1,16 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ViewCardComponent } from './view-card.component';
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 import { RouterTestingModule } from "@angular/router/testing";
 import { LoggerService } from "@core/logger.service";
 import { View } from "@dataservices//shared/view.model";
@@ -14,14 +23,24 @@ describe('ViewCardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ ViewCardComponent ],
       imports: [
-        PatternFlyNgModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule,
         RouterTestingModule
       ],
       providers: [
         LoggerService
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {

@@ -32,31 +32,31 @@ describe("ConnectionTreeSelectorComponent", () => {
     fixture = TestBed.createComponent(ConnectionTreeSelectorComponent);
     component = fixture.componentInstance;
 
-    const node = {
-      "connectionName": "pgConn",
-      "name": "restaurants",
-      "type": "collection",
-      "queryable": true,
-      "children": [
-        {
-          "connectionName": "pgConn",
-          "name": "grades",
-          "type": "embedded",
-          "queryable": true,
-          "children": []
-        },
-        {
-          "connectionName": "pgConn",
-          "name": "location",
-          "type": "embedded",
-          "queryable": true,
-          "children": []
-        }
-      ]
-    };
-
-    component.nodes = [ SchemaNode.create( node ) ];
-    component.options = {};
+    // const node = {
+    //   "connectionName": "pgConn",
+    //   "name": "restaurants",
+    //   "type": "collection",
+    //   "queryable": true,
+    //   "children": [
+    //     {
+    //       "connectionName": "pgConn",
+    //       "name": "grades",
+    //       "type": "embedded",
+    //       "queryable": true,
+    //       "children": []
+    //     },
+    //     {
+    //       "connectionName": "pgConn",
+    //       "name": "location",
+    //       "type": "embedded",
+    //       "queryable": true,
+    //       "children": []
+    //     }
+    //   ]
+    // };
+    //
+    // component.nodes = [ SchemaNode.create( node ) ];
+    // component.options = {};
     fixture.detectChanges();
   });
 

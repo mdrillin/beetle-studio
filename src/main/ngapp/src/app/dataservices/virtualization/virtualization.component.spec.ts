@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
 import { CoreModule } from "@core/core.module";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { SelectionService } from "@core/selection.service";
 import { DataserviceService } from "@dataservices/shared/dataservice.service";
 import { MockDataserviceService } from "@dataservices/shared/mock-dataservice.service";
@@ -12,7 +14,16 @@ import { VirtualizationComponent } from "@dataservices/virtualization/virtualiza
 import { ViewCardsComponent } from "@dataservices/virtualization/view-cards/view-cards.component";
 import { ViewCardComponent } from "@dataservices/virtualization/view-cards/view-card/view-card.component";
 import { PropertyFormPropertyComponent } from "@shared/property-form/property-form-property/property-form-property.component";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
 
 describe("VirtualizationComponent", () => {
   let component: VirtualizationComponent;
@@ -23,7 +34,15 @@ describe("VirtualizationComponent", () => {
       imports: [
         CoreModule,
         FormsModule,
-        PatternFlyNgModule,
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule,
         ReactiveFormsModule,
         RouterTestingModule
       ],
@@ -34,13 +53,16 @@ describe("VirtualizationComponent", () => {
         VirtualizationComponent
       ],
       providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         { provide: DataserviceService, useClass: MockDataserviceService },
         NotifierService,
         SelectionService,
         { provide: VdbService, useClass: MockVdbService }
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   });
 
   beforeEach(() => {

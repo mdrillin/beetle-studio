@@ -1,10 +1,24 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpModule } from "@angular/http";
 import { LoggerService } from "@core/logger.service";
+import { MockAppSettingsService } from "@core/mock-app-settings.service";
+import { AppSettingsService } from "@core/app-settings.service";
 import { SelectedNodeComponent } from "@dataservices/selected-node/selected-node.component";
 import { ViewCanvasComponent } from '@dataservices/virtualization/view-editor/view-canvas/view-canvas.component';
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { PatternFlyNgModule } from "patternfly-ng";
+import {
+  ActionModule,
+  CardModule,
+  EmptyStateModule,
+  FilterModule,
+  ListModule,
+  NotificationModule,
+  SortModule,
+  TableModule,
+  WizardModule } from "patternfly-ng";
+import { VdbService } from "@dataservices/shared/vdb.service";
+import { MockVdbService } from "@dataservices/shared/mock-vdb.service";
+import { NotifierService } from "@dataservices/shared/notifier.service";
 
 describe('ViewCanvasComponent', () => {
   let component: ViewCanvasComponent;
@@ -12,14 +26,30 @@ describe('ViewCanvasComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ PatternFlyNgModule ],
+      imports: [
+        ActionModule,
+        CardModule,
+        EmptyStateModule,
+        FilterModule,
+        ListModule,
+        NotificationModule,
+        SortModule,
+        TableModule,
+        WizardModule,
+        HttpModule
+      ],
       declarations: [ ViewCanvasComponent, SelectedNodeComponent ],
       providers: [
+        { provide: AppSettingsService, useClass: MockAppSettingsService },
         LoggerService,
+        NotifierService,
+        { provide: VdbService, useClass: MockVdbService },
         ViewEditorService
       ]
     })
-    .compileComponents();
+    .compileComponents().then(() => {
+      // nothing to do
+    });
   }));
 
   beforeEach(() => {
