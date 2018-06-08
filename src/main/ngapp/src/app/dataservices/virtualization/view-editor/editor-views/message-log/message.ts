@@ -19,6 +19,12 @@ import { Problem } from "@dataservices/virtualization/view-editor/editor-views/m
 
 export class Message {
 
+  // Property names
+  public static readonly CONTEXT_PROP_NAME = "_context";
+  public static readonly DESCRIPTION_PROP_NAME = "_description";
+  public static readonly ID_PROP_NAME = "_id";
+  public static readonly TYPE_PROP_NAME = "_type";
+
   private readonly _context: string;
   private readonly _description: string;
   private readonly _id: string;

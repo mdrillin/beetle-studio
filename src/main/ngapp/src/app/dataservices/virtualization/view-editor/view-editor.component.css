@@ -10,7 +10,6 @@
   height: 90vh;
   justify-content: stretch;
   overflow-y: auto;
-  padding: 4px;
   width: 100%;
 }
 
@@ -20,7 +19,7 @@
 .view-editor-area {
   background-color: #ededed;
   border: 1px solid #bbbbbb;
-  padding: 0 20px;
+  padding: 0;
 }
 
 /*

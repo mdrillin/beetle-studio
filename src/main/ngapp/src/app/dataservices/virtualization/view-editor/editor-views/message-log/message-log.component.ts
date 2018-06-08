@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { LoggerService } from "@core/logger.service";
 import { ViewEditorService } from "@dataservices/virtualization/view-editor/view-editor.service";
-import { Subscription } from "rxjs/Subscription";
-import { ViewEditorEvent } from "@dataservices/virtualization/view-editor/event/view-editor-event";
 import { EmptyStateConfig, NgxDataTableConfig, TableConfig } from "patternfly-ng";
 import { Message } from "@dataservices/virtualization/view-editor/editor-views/message-log/message";
 
@@ -29,80 +27,47 @@ import { Message } from "@dataservices/virtualization/view-editor/editor-views/m
   templateUrl: './message-log.component.html',
   styleUrls: ['./message-log.component.css']
 })
-export class MessageLogComponent implements OnInit, OnDestroy {
+export class MessageLogComponent implements OnInit {
 
   public columns: any[];
   private emptyStateConfig: EmptyStateConfig;
   public ngxConfig: NgxDataTableConfig;
   public tableConfig: TableConfig;
-  // public rows: any[] = [];
 
   private readonly editorService: ViewEditorService;
   private readonly logger: LoggerService;
-  private subscription: Subscription;
 
   constructor( logger: LoggerService,
                editorService: ViewEditorService ) {
     this.logger = logger;
     this.editorService = editorService;
   }
-  //
-  // private clearMessages(): void {
-  //   if ( this.rows && this.rows.length !== 0 ) {
-  //     this.rows = [];
-  //   }
-  // }
-
-  /**
-   * @param {ViewEditorEvent} event the event being processed
-   */
-  public handleEditorEvent( event: ViewEditorEvent ): void {
-    this.logger.debug( "MessageLogComponent received event: " + event.toString() );
-    //
-    // if ( event.typeIsLogMessageAdded() ) {
-    //   this.rows.push( event.args[ 0 ] );
-    // } else if ( event.typeIsLogMessageDeleted() ) {
-    //   const deletedMsg = event.args[ 0 ];
-    //   const index = this.rows.findIndex( ( msg ) => msg.id === deletedMsg.id );
-    //
-    //   if ( index !== -1 ) {
-    //     this.rows.splice( index, 1 );
-    //   }
-    // } else if ( event.typeIsLogMessagesCleared() ) {
-    //   this.clearMessages();
-    // }
-  }
-
-  /**
-   * Cleanup code when destroying the editor.
-   */
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
 
   /**
    * Initialization code run after construction.
    */
   public ngOnInit(): void {
-    this.subscription = this.editorService.editorEvent.subscribe( ( event ) => this.handleEditorEvent( event ) );
-
     this.columns = [
       {
-        prop: "id"
+        name: "ID",
+        prop: Message.ID_PROP_NAME
       },
       {
-        prop: "type"
+        name: "Type",
+        prop: Message.TYPE_PROP_NAME
       },
       {
-        prop: "description"
+        name: "Description",
+        prop: Message.DESCRIPTION_PROP_NAME
       },
       {
-        prop: "context"
+        name: "Context",
+        prop: Message.CONTEXT_PROP_NAME
       },
     ];
 
     this.ngxConfig = {
-      headerHeight: 40,
+      headerHeight: 30,
       rowHeight: 20,
       scrollbarH: true,
       scrollbarV: true

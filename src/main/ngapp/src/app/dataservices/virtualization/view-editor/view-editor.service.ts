@@ -87,7 +87,7 @@ export class ViewEditorService {
    */
   public clearMessages( source: ViewEditorPart,
                         context?: string ): void {
-    this._messages.length = 0;
+    this._messages = [];
     this._errorMsgCount = 0;
     this._warningMsgCount = 0;
     this._infoMsgCount = 0;
