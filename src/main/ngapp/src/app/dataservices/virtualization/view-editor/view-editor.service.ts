@@ -508,6 +508,10 @@ export class ViewEditorService {
     this.resetUndoManager();
     // Notify components that view has been reset
     this.fire( ViewEditorEvent.create( source, ViewEditorEventType.EDITED_VIEW_SET, [ this._editorView ] ) );
+
+    const viewStr = JSON.stringify(this._editorView.toJSON());
+    this._logger.debug( "[setEditorView] - call update preview : " + viewStr );
+
     // Reset the preview panel for this view
     this.updatePreviewResults();
   }
@@ -542,6 +546,7 @@ export class ViewEditorService {
     if ( sourcePath != null && !sourcePath.startsWith(AddCompositionCommand.id) ) {
       // Fetch new results for source table
       querySql = this._editorView.getPreviewSql(sourcePath);
+      this._logger.debug( "[updatePreviewResults, with sourcePath : " + querySql );
     } else {
       // Determine if view is select *
       if (this._editorView.isProjectAllColumns()) {
@@ -549,6 +554,7 @@ export class ViewEditorService {
       }
       // Fetch new results for view
       querySql = this._editorView.getPreviewSql();
+      this._logger.debug( "[updatePreviewResults, no sourcePath : " + querySql );
     }
 
     const self = this;
